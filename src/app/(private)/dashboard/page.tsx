@@ -3,6 +3,8 @@ import { Calculator, TrendingUp, Home, Baby, PiggyBank, Target, ArrowRight } fro
 import { getUser } from '@/lib/auth/getUser'
 import { redirect } from 'next/navigation'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const user = await getUser()
 

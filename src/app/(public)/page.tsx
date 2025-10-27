@@ -4,6 +4,8 @@ import { HomeNavigation } from '@/components/layout/HomeNavigation'
 import {getUser} from "@/lib/auth/getUser";
 import {redirect} from "next/navigation";
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const user = await getUser()
 

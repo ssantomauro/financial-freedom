@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { Home, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export default async function BuyVsRentCalculatorPage() {
   const user = await getUser()
 

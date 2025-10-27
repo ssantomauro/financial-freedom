@@ -55,7 +55,7 @@ export default function SignupPage() {
         } else {
           setSuccess('Account created successfully! Redirecting...')
           setTimeout(() => {
-            router.push('/')
+            router.push('/dashboard')
             router.refresh()
           }, 1500)
         }

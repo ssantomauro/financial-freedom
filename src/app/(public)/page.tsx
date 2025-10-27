@@ -1,31 +1,20 @@
 import Link from 'next/link'
 import { Calculator, TrendingUp, Home, Baby, PiggyBank, Target, ArrowRight, CheckCircle, Sparkles } from 'lucide-react'
+import { HomeNavigation } from '@/components/layout/HomeNavigation'
+import {getUser} from "@/lib/auth/getUser";
+import {redirect} from "next/navigation";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const user = await getUser()
+
+  if (user) {
+    redirect('/dashboard')
+  }
+
   return (
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
         {/* Navigation */}
-        <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-8 h-8 text-blue-600" />
-                <span className="text-2xl font-bold text-gray-900">Financial Freedom</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <Link href="/login" className="text-gray-600 hover:text-gray-900">
-                  Log In
-                </Link>
-                <Link
-                    href="/signup"
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                  Get Started Free
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
+        <HomeNavigation />
 
         {/* Hero Section */}
         <section className="pt-20 pb-32 px-4">

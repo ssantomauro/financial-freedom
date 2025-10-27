@@ -37,7 +37,7 @@ export default function LoginPage() {
       if (response.ok) {
         setSuccess('Login successful! Redirecting...')
         setTimeout(() => {
-          router.push('/')
+          router.push('/dashboard')
           router.refresh()
         }, 1000)
       } else {

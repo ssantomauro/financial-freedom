@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Financial Freedom - Smart Financial Calculators',
   description: 'Free financial calculators to help you make smarter decisions',
+  icons: {
+    icon: '/financial_freedom.ico',
+  },
 }
 
 export default function RootLayout({

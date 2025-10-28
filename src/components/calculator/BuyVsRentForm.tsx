@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { Home, TrendingUp, DollarSign, Calendar } from 'lucide-react'
 
 interface BuyVsRentFormProps {
   onSubmit: (data: BuyVsRentInputs) => void
   isDisabled: boolean
+  initialValues?: BuyVsRentInputs | null
 }
 
 export interface BuyVsRentInputs {
@@ -34,8 +35,8 @@ export interface BuyVsRentInputs {
   yearsToCompare: number
 }
 
-export function BuyVsRentForm({ onSubmit, isDisabled }: BuyVsRentFormProps) {
-  const [formData, setFormData] = useState<BuyVsRentInputs>({
+export function BuyVsRentForm({ onSubmit, isDisabled, initialValues }: BuyVsRentFormProps) {
+  const defaultValues: BuyVsRentInputs = {
     homePrice: 400000,
     downPayment: 80000,
     interestRate: 6.5,
@@ -50,7 +51,16 @@ export function BuyVsRentForm({ onSubmit, isDisabled }: BuyVsRentFormProps) {
     rentIncrease: 3,
     investmentReturn: 7,
     yearsToCompare: 10,
-  })
+  }
+
+  const [formData, setFormData] = useState<BuyVsRentInputs>(defaultValues)
+
+  // Update form data when initialValues change
+  useEffect(() => {
+    if (initialValues) {
+      setFormData(initialValues)
+    }
+  }, [initialValues])
 
   const handleChange = (field: keyof BuyVsRentInputs, value: string) => {
     setFormData(prev => ({

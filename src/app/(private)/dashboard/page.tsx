@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { Calculator, TrendingUp, Home, Baby, PiggyBank, Target, ArrowRight } from 'lucide-react'
 import { getUser } from '@/lib/auth/getUser'
 import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/db/prisma'
+import { CalculationHistory } from '@/components/dashboard/CalculationHistory'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,6 +13,14 @@ export default async function DashboardPage() {
   if (!user) {
     redirect('/login')
   }
+
+  // Get user's lifetime access status
+  const dbUser = await prisma.user.findUnique({
+    where: { supabaseId: user.id },
+    select: { hasLifetimeAccess: true },
+  })
+
+  const hasLifetimeAccess = dbUser?.hasLifetimeAccess || false
 
   return (
     <div className="py-12 px-4">
@@ -25,8 +35,12 @@ export default async function DashboardPage() {
           </p>
         </div>
 
+        {/* Calculation History */}
+        <CalculationHistory hasLifetimeAccess={hasLifetimeAccess} />
+
         {/* Calculators Grid */}
         <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">All Calculators</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {calculators.map((calc) => (
               <CalculatorCard key={calc.id} {...calc} />

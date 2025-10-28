@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { Home, ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react'
 import { BuyVsRentForm, BuyVsRentInputs } from '@/components/calculator/BuyVsRentForm'
 import { PaywallModal } from '@/components/calculator/PaywallModal'
@@ -26,15 +27,25 @@ interface CalculationResult {
 }
 
 export function BuyVsRentCalculator() {
+  const searchParams = useSearchParams()
+  const calculationId = searchParams.get('calculation')
+
   const [usageStatus, setUsageStatus] = useState<UsageStatus | null>(null)
   const [loading, setLoading] = useState(true)
   const [showPaywall, setShowPaywall] = useState(false)
   const [result, setResult] = useState<CalculationResult | null>(null)
   const [calculating, setCalculating] = useState(false)
+  const [initialInputs, setInitialInputs] = useState<BuyVsRentInputs | null>(null)
+  const [loadingCalculation, setLoadingCalculation] = useState(false)
 
   useEffect(() => {
     checkUsageStatus()
-  }, [])
+
+    // Load past calculation if ID is provided
+    if (calculationId) {
+      loadCalculation(calculationId)
+    }
+  }, [calculationId])
 
   const checkUsageStatus = async (): Promise<UsageStatus | null> => {
     try {
@@ -47,6 +58,31 @@ export function BuyVsRentCalculator() {
       return null
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadCalculation = async (id: string) => {
+    setLoadingCalculation(true)
+    try {
+      const response = await fetch(`/api/calculations/${id}`)
+      if (response.ok) {
+        const data = await response.json()
+        const calc = data.calculation
+
+        // Set initial inputs from saved calculation
+        setInitialInputs(calc.inputData as BuyVsRentInputs)
+
+        // If there's result data, show it
+        if (calc.resultData) {
+          setResult(calc.resultData as CalculationResult)
+        }
+      } else {
+        console.error('Failed to load calculation')
+      }
+    } catch (error) {
+      console.error('Error loading calculation:', error)
+    } finally {
+      setLoadingCalculation(false)
     }
   }
 
@@ -242,7 +278,18 @@ export function BuyVsRentCalculator() {
 
         {/* Calculator Form */}
         <div className="mb-8">
-          <BuyVsRentForm onSubmit={handleSubmit} isDisabled={isFormDisabled} />
+          {loadingCalculation ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <p className="mt-4 text-gray-600">Loading calculation...</p>
+            </div>
+          ) : (
+            <BuyVsRentForm
+              onSubmit={handleSubmit}
+              isDisabled={isFormDisabled}
+              initialValues={initialInputs}
+            />
+          )}
 
           {/* Remaining Calculations Info */}
           {usageStatus && !usageStatus.hasLifetimeAccess && usageStatus.remainingCalculations > 0 && (

@@ -6,7 +6,7 @@ import { UserDropdown } from '@/components/auth/UserDropdown'
 
 export function PrivateHeader() {
   return (
-    <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+    <nav className="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/dashboard" className="flex items-center">

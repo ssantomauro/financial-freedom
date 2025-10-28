@@ -24,6 +24,13 @@ model User {
   provider      String?  // 'email', 'google', 'apple'
   supabaseId    String?  @unique // Supabase auth.users.id reference
 
+  // Subscription status
+  hasLifetimeAccess Boolean  @default(false)
+  subscriptionDate  DateTime?
+
+  // Relations
+  calculations  Calculation[]
+
   // Timestamps
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -31,4 +38,29 @@ model User {
   @@index([email])
   @@index([supabaseId])
   @@map("users")
+}
+
+// Calculation model - stores all calculator submissions
+model Calculation {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @db.Uuid
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Calculator type identifier
+  calculatorType String  // e.g., 'buy-vs-rent', 'compound-interest', 'retirement'
+
+  // Input data stored as JSON
+  inputData     Json
+
+  // Result data stored as JSON
+  resultData    Json?
+
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([calculatorType])
+  @@index([userId, calculatorType])
+  @@map("calculations")
 }

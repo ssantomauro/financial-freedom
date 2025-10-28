@@ -1,6 +1,7 @@
 'use client'
 
-import { Lock, Check, X } from 'lucide-react'
+import { useState } from 'react'
+import { Lock, Check, X, Loader2 } from 'lucide-react'
 
 interface PaywallModalProps {
   isOpen: boolean
@@ -9,11 +10,37 @@ interface PaywallModalProps {
 }
 
 export function PaywallModal({ isOpen, onClose, calculatorName }: PaywallModalProps) {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   if (!isOpen) return null
 
-  const handleGetLifetimeAccess = () => {
-    // TODO: Implement payment flow (Stripe, etc.)
-    console.log('Redirect to payment page')
+  const handleGetLifetimeAccess = async () => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/stripe/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.url
+      } else {
+        setError(data.error || 'Failed to create checkout session')
+        setLoading(false)
+      }
+    } catch (err) {
+      console.error('Checkout error:', err)
+      setError('An error occurred. Please try again.')
+      setLoading(false)
+    }
   }
 
   return (
@@ -75,17 +102,33 @@ export function PaywallModal({ isOpen, onClose, calculatorName }: PaywallModalPr
             </div>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3 text-red-600 text-sm">
+              {error}
+            </div>
+          )}
+
           {/* CTA Buttons */}
           <div className="space-y-3">
             <button
               onClick={handleGetLifetimeAccess}
-              className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition shadow-lg hover:shadow-xl"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition shadow-lg hover:shadow-xl disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Get Lifetime Access Now
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Redirecting to checkout...</span>
+                </>
+              ) : (
+                'Get Lifetime Access Now'
+              )}
             </button>
             <button
               onClick={onClose}
-              className="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition"
+              disabled={loading}
+              className="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Maybe Later
             </button>

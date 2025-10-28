@@ -14,17 +14,18 @@ export function SuccessPageContent() {
   useEffect(() => {
     // Redirect to dashboard after 10 seconds
     const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          router.push('/dashboard')
-          return 0
-        }
-        return prev - 1
-      })
+      setCountdown((prev) => prev - 1)
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [router])
+  }, [])
+
+  useEffect(() => {
+    // Navigate when countdown reaches 0
+    if (countdown === 0) {
+      router.push('/dashboard')
+    }
+  }, [countdown, router])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center px-4 py-12">

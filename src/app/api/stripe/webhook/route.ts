@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
         // Update user to have lifetime access
         await prisma.user.update({
-          where: { supabaseId: userId },
+          where: { id: userId },
           data: {
             hasLifetimeAccess: true,
             subscriptionDate: new Date(),

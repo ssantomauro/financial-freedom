@@ -108,7 +108,7 @@ export default function TermsOfServicePage() {
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Refund Policy</h3>
               <p className="text-gray-700">
-                We offer a 30-day money-back guarantee. If you are not satisfied with your purchase, contact us within 30 days for a full refund. After 30 days, all sales are final.
+                We offer a 14-day money-back guarantee. If you are not satisfied with your purchase, contact us within 30 days for a full refund. After 30 days, all sales are final.
               </p>
             </section>
 

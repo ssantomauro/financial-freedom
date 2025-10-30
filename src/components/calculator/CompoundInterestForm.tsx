@@ -243,15 +243,6 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
       >
         Calculate Growth
       </button>
-
-      {/* Disclaimer */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-        <p className="text-sm text-amber-800">
-          <strong>Disclaimer:</strong> This calculator provides estimates based on your inputs.
-          Past performance doesn't guarantee future results. Investment returns can vary significantly.
-          This is not financial advice - I am not a financial advisor.
-        </p>
-      </div>
     </form>
   )
 }

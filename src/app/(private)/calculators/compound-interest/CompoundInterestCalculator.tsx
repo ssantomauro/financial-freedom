@@ -165,9 +165,18 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
               )}
             </div>
           </div>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-600 mb-6">
             See how your money grows over time with compound interest. Toggle inflation to see real purchasing power.
           </p>
+
+          {/* Disclaimer */}
+          <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
+            <p className="text-sm text-amber-900">
+              <strong>DISCLAIMER:</strong> This calculator is provided for educational and informational purposes only and
+              does not constitute financial advice. This is just a tool to help you make a decision.
+              You should always consult with a professional before making any financial decisions.
+            </p>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8">

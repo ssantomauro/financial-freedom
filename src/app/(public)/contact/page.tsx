@@ -108,7 +108,7 @@ export default function ContactPage() {
               href="/signup"
               className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
             >
-              Get Started Free
+              Start For Free
             </Link>
           </div>
         </div>

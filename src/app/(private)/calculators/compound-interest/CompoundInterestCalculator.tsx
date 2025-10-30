@@ -150,7 +150,7 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
 
   return (
     <div className="py-8 px-4">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Back to Dashboard Link */}
         <Link
           href="/dashboard"

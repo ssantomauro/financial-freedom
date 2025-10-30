@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Clock, ChevronRight, Calculator } from 'lucide-react'
+import { Clock, ChevronRight, Calculator, Home, TrendingUp, Target, PiggyBank, Baby } from 'lucide-react'
 
 interface Calculation {
   id: string
@@ -32,6 +32,15 @@ const CALCULATOR_COLORS: { [key: string]: string } = {
   'savings': 'bg-orange-100 text-orange-600',
   'children-savings': 'bg-pink-100 text-pink-600',
   'mortgage': 'bg-indigo-100 text-indigo-600',
+}
+
+const CALCULATOR_ICONS: { [key: string]: any } = {
+  'buy-vs-rent': Home,
+  'compound-interest': TrendingUp,
+  'retirement': Target,
+  'savings': PiggyBank,
+  'children-savings': Baby,
+  'mortgage': Calculator,
 }
 
 export function CalculationHistory({ hasLifetimeAccess }: CalculationHistoryProps) {
@@ -138,7 +147,10 @@ export function CalculationHistory({ hasLifetimeAccess }: CalculationHistoryProp
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
                   CALCULATOR_COLORS[calc.calculatorType] || 'bg-gray-100 text-gray-600'
                 }`}>
-                  <Calculator className="w-6 h-6" />
+                  {(() => {
+                    const IconComponent = CALCULATOR_ICONS[calc.calculatorType] || Calculator
+                    return <IconComponent className="w-6 h-6" />
+                  })()}
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition">

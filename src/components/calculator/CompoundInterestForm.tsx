@@ -135,7 +135,6 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 required
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
             </div>
           </div>
 
@@ -228,7 +227,6 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
               </div>
             </div>
           )}

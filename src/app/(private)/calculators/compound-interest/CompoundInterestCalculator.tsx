@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { CompoundInterestForm, CompoundInterestInputs } from '@/components/calculator/CompoundInterestForm'
 import { calculateCompoundInterest, CompoundInterestResult } from '@/lib/calculations/compoundInterest'
 import { PaywallModal } from '@/components/calculator/PaywallModal'
-import { TrendingUp, DollarSign, Percent } from 'lucide-react'
+import { TrendingUp, DollarSign, Percent, ArrowLeft } from 'lucide-react'
 import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
 
 interface UsageStatus {
@@ -150,6 +151,15 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
   return (
     <div className="py-8 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* Back to Dashboard Link */}
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6 font-medium transition"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Dashboard
+        </Link>
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">

@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { Home, ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react'
 import { BuyVsRentForm, BuyVsRentInputs } from '@/components/calculator/BuyVsRentForm'
 import { PaywallModal } from '@/components/calculator/PaywallModal'
+import { BuyVsRentExplanationModal } from '@/components/calculator/BuyVsRentExplanationModal'
 import {LabelWithTooltip} from "@/components/ui/LabelWithTooltip";
 
 interface UsageStatus {
@@ -37,6 +38,7 @@ export function BuyVsRentCalculator() {
   const [usageStatus, setUsageStatus] = useState<UsageStatus | null>(null)
   const [loading, setLoading] = useState(true)
   const [showPaywall, setShowPaywall] = useState(false)
+  const [showBuyVsRentExplanation, setShowBuyVsRentExplanation] = useState(false)
   const [result, setResult] = useState<CalculationResult | null>(null)
   const [calculating, setCalculating] = useState(false)
   const [initialInputs, setInitialInputs] = useState<BuyVsRentInputs | null>(null)
@@ -289,6 +291,15 @@ export function BuyVsRentCalculator() {
           </div>
         </div>
 
+        {/* Disclaimer */}
+        <div className="mb-6 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
+          <p className="text-sm text-amber-900">
+            <strong>DISCLAIMER:</strong> This calculator is provided for educational and informational purposes only and
+            does not constitute financial advice. This is just a tool to help you make a decision.
+            You should always consult with a professional before making any financial decisions.
+          </p>
+        </div>
+
         {/* Usage Status Banner */}
         {usageStatus && !usageStatus.hasLifetimeAccess && usageStatus.remainingCalculations === 0 && (
           <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
@@ -369,17 +380,13 @@ export function BuyVsRentCalculator() {
                 </h3>
               </div>
               <p className="text-center text-gray-700 text-lg">
-                {result.recommendation === 'buy'
-                  ? `Buying could save you ${result.savings.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      maximumFractionDigits: 0,
-                    })} over the time period examined (Loan Term years).`
-                  : `Renting could save you ${result.savings.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      maximumFractionDigits: 0,
-                    })} over the time period examined (Loan Term years)`}
+                <span>
+                  {result.recommendation === 'buy' ? `Buying` : `Renting`} puts an extra
+                  <strong> {result.savings.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  maximumFractionDigits: 0,
+                })}</strong> in your pocket over the time period examined (Loan Term years).</span>
               </p>
             </div>
 
@@ -542,6 +549,16 @@ export function BuyVsRentCalculator() {
             {/*    </p>*/}
             {/*  </div>*/}
             {/*)}*/}
+
+            {/* Learn More Link */}
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => setShowBuyVsRentExplanation(true)}
+                className="text-blue-600 hover:text-blue-700 font-medium text-sm underline"
+              >
+                What you should know about this calculator
+              </button>
+            </div>
           </div>
         )}
 
@@ -550,6 +567,12 @@ export function BuyVsRentCalculator() {
           isOpen={showPaywall}
           onClose={() => setShowPaywall(false)}
           calculatorName="Buy vs Rent Calculator"
+        />
+
+        {/* Math Explanation Modal */}
+        <BuyVsRentExplanationModal
+          isOpen={showBuyVsRentExplanation}
+          onClose={() => setShowBuyVsRentExplanation(false)}
         />
       </div>
     </div>

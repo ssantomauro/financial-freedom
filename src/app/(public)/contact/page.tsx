@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Mail, MessageSquare } from 'lucide-react'
 import { HomeNavigation } from '@/components/layout/HomeNavigation'
 import { PrivateFooter } from '@/components/layout/PrivateFooter'
+import { ContactPageTracker } from './ContactPageTracker'
 
 export const metadata = {
   title: 'Contact Us - Financial Freedom',
@@ -11,6 +12,9 @@ export const metadata = {
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* Track page view */}
+      <ContactPageTracker />
+
       {/* Navigation */}
       <HomeNavigation />
 

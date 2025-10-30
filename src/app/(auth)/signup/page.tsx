@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AuthButton } from '@/components/auth/AuthButton'
@@ -8,6 +8,7 @@ import { AuthInput } from '@/components/auth/AuthInput'
 import { OAuthButtons } from '@/components/auth/OAuthButtons'
 import { Divider } from '@/components/auth/Divider'
 import { Alert } from '@/components/auth/Alert'
+import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -19,6 +20,12 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [requiresVerification, setRequiresVerification] = useState(false)
+  const { trackEvent, identifyUser } = usePostHog()
+
+  useEffect(() => {
+    // Track when user lands on signup page
+    trackEvent(AnalyticsEvents.SIGNUP_STARTED)
+  }, [trackEvent])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -49,6 +56,22 @@ export default function SignupPage() {
       const data = await response.json()
 
       if (response.ok) {
+        // Track successful signup
+        trackEvent(AnalyticsEvents.SIGNUP_COMPLETED, {
+          email,
+          name,
+          requires_verification: data.requiresEmailVerification || false
+        })
+
+        // Identify user if we have their ID
+        if (data.userId) {
+          identifyUser(data.userId, {
+            email,
+            name,
+            signup_date: new Date().toISOString()
+          })
+        }
+
         if (data.requiresEmailVerification) {
           setRequiresVerification(true)
           setSuccess(data.message)

@@ -4,12 +4,23 @@ import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle, Sparkles, ArrowRight } from 'lucide-react'
+import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
 
 export function SuccessPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const sessionId = searchParams.get('session_id')
   const [countdown, setCountdown] = useState(10)
+  const { trackEvent } = usePostHog()
+
+  useEffect(() => {
+    // Track payment completion
+    trackEvent(AnalyticsEvents.PAYMENT_COMPLETED, {
+      session_id: sessionId,
+      amount: 9.90,
+      currency: 'USD'
+    })
+  }, [sessionId, trackEvent])
 
   useEffect(() => {
     // Redirect to dashboard after 10 seconds

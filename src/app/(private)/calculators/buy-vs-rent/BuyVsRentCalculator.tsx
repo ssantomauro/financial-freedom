@@ -6,8 +6,9 @@ import { useSearchParams } from 'next/navigation'
 import { Home, ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react'
 import { BuyVsRentForm, BuyVsRentInputs } from '@/components/calculator/BuyVsRentForm'
 import { PaywallModal } from '@/components/calculator/PaywallModal'
-import { BuyVsRentExplanationModal } from '@/components/calculator/BuyVsRentExplanationModal'
+import { MathExplanationModal } from '@/components/calculator/MathExplanationModal'
 import {LabelWithTooltip} from "@/components/ui/LabelWithTooltip";
+import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
 
 interface UsageStatus {
   canUse: boolean
@@ -34,24 +35,31 @@ interface CalculationResult {
 export function BuyVsRentCalculator() {
   const searchParams = useSearchParams()
   const calculationId = searchParams.get('calculation')
+  const { trackEvent } = usePostHog()
 
   const [usageStatus, setUsageStatus] = useState<UsageStatus | null>(null)
   const [loading, setLoading] = useState(true)
   const [showPaywall, setShowPaywall] = useState(false)
-  const [showBuyVsRentExplanation, setShowBuyVsRentExplanation] = useState(false)
+  const [showMathExplanation, setShowMathExplanation] = useState(false)
   const [result, setResult] = useState<CalculationResult | null>(null)
   const [calculating, setCalculating] = useState(false)
   const [initialInputs, setInitialInputs] = useState<BuyVsRentInputs | null>(null)
   const [loadingCalculation, setLoadingCalculation] = useState(false)
 
   useEffect(() => {
+    // Track calculator opened
+    trackEvent(AnalyticsEvents.CALCULATOR_OPENED, {
+      calculator: 'buy-vs-rent',
+      from_history: !!calculationId
+    })
+
     checkUsageStatus()
 
     // Load past calculation if ID is provided
     if (calculationId) {
       loadCalculation(calculationId)
     }
-  }, [calculationId])
+  }, [calculationId, trackEvent])
 
   const checkUsageStatus = async (): Promise<UsageStatus | null> => {
     try {
@@ -208,8 +216,19 @@ export function BuyVsRentCalculator() {
   }
 
   const handleSubmit = async (inputs: BuyVsRentInputs) => {
+    // Track calculation started
+    trackEvent(AnalyticsEvents.CALCULATOR_STARTED, {
+      calculator: 'buy-vs-rent',
+      has_lifetime_access: usageStatus?.hasLifetimeAccess,
+      calculations_remaining: usageStatus?.remainingCalculations
+    })
+
     // Check if user can use the calculator
     if (!usageStatus?.canUse) {
+      trackEvent(AnalyticsEvents.PAYWALL_SHOWN, {
+        calculator: 'buy-vs-rent',
+        trigger: 'no_calculations_remaining'
+      })
       setShowPaywall(true)
       return
     }
@@ -220,6 +239,14 @@ export function BuyVsRentCalculator() {
       // Calculate results
       const calculationResult = calculateResults(inputs)
       setResult(calculationResult)
+
+      // Track calculation completed
+      trackEvent(AnalyticsEvents.CALCULATION_COMPLETED, {
+        calculator: 'buy-vs-rent',
+        recommendation: calculationResult.recommendation,
+        savings: calculationResult.savings,
+        has_lifetime_access: usageStatus?.hasLifetimeAccess
+      })
 
       // Save to database
       await fetch('/api/calculations/save', {
@@ -232,12 +259,20 @@ export function BuyVsRentCalculator() {
         }),
       })
 
+      trackEvent(AnalyticsEvents.CALCULATION_SAVED, {
+        calculator: 'buy-vs-rent'
+      })
+
       // Update usage status
       const updatedStatus = await checkUsageStatus()
 
       // Show paywall after 3rd calculation (when remaining becomes 0)
       if (!usageStatus.hasLifetimeAccess && updatedStatus && updatedStatus.remainingCalculations === 0) {
         setTimeout(() => {
+          trackEvent(AnalyticsEvents.PAYWALL_SHOWN, {
+            calculator: 'buy-vs-rent',
+            trigger: 'after_last_free_calculation'
+          })
           setShowPaywall(true)
         }, 2000) // Show paywall 2 seconds after seeing results
       }
@@ -553,10 +588,15 @@ export function BuyVsRentCalculator() {
             {/* Learn More Link */}
             <div className="mt-6 text-center">
               <button
-                onClick={() => setShowBuyVsRentExplanation(true)}
+                onClick={() => {
+                  trackEvent(AnalyticsEvents.MATH_MODAL_OPENED, {
+                    calculator: 'buy-vs-rent'
+                  })
+                  setShowMathExplanation(true)
+                }}
                 className="text-blue-600 hover:text-blue-700 font-medium text-sm underline"
               >
-                What you should know about this calculator
+                Do you want to know more about the math behind? Click here
               </button>
             </div>
           </div>
@@ -570,9 +610,9 @@ export function BuyVsRentCalculator() {
         />
 
         {/* Math Explanation Modal */}
-        <BuyVsRentExplanationModal
-          isOpen={showBuyVsRentExplanation}
-          onClose={() => setShowBuyVsRentExplanation(false)}
+        <MathExplanationModal
+          isOpen={showMathExplanation}
+          onClose={() => setShowMathExplanation(false)}
         />
       </div>
     </div>

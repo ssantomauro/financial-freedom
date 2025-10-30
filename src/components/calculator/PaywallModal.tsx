@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Lock, Check, X, Loader2 } from 'lucide-react'
+import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
 
 interface PaywallModalProps {
   isOpen: boolean
@@ -12,10 +13,16 @@ interface PaywallModalProps {
 export function PaywallModal({ isOpen, onClose, calculatorName }: PaywallModalProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { trackEvent } = usePostHog()
 
   if (!isOpen) return null
 
   const handleGetLifetimeAccess = async () => {
+    trackEvent(AnalyticsEvents.UPGRADE_CLICKED, {
+      calculator: calculatorName,
+      source: 'paywall_modal'
+    })
+
     setLoading(true)
     setError(null)
 
@@ -30,6 +37,13 @@ export function PaywallModal({ isOpen, onClose, calculatorName }: PaywallModalPr
       const data = await response.json()
 
       if (response.ok && data.url) {
+        // Track payment initiated
+        trackEvent(AnalyticsEvents.PAYMENT_INITIATED, {
+          calculator: calculatorName,
+          source: 'paywall_modal',
+          session_id: data.sessionId
+        })
+
         // Redirect to Stripe checkout
         window.location.href = data.url
       } else {

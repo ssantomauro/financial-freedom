@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AuthButton } from '@/components/auth/AuthButton'
@@ -8,6 +8,7 @@ import { AuthInput } from '@/components/auth/AuthInput'
 import { OAuthButtons } from '@/components/auth/OAuthButtons'
 import { Divider } from '@/components/auth/Divider'
 import { Alert } from '@/components/auth/Alert'
+import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -16,6 +17,12 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const { trackEvent, identifyUser } = usePostHog()
+
+  useEffect(() => {
+    // Track when user lands on login page
+    trackEvent(AnalyticsEvents.LOGIN_STARTED)
+  }, [trackEvent])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -35,6 +42,20 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (response.ok) {
+        // Track successful login
+        trackEvent(AnalyticsEvents.LOGIN_COMPLETED, {
+          email,
+          login_method: 'email_password'
+        })
+
+        // Identify user if we have their ID
+        if (data.userId) {
+          identifyUser(data.userId, {
+            email,
+            last_login: new Date().toISOString()
+          })
+        }
+
         setSuccess('Login successful! Redirecting...')
         setTimeout(() => {
           router.push('/dashboard')

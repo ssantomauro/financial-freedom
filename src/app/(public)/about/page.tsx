@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Target, Heart, Lightbulb, TrendingUp } from 'lucide-react'
 import { HomeNavigation } from '@/components/layout/HomeNavigation'
 import { PrivateFooter } from '@/components/layout/PrivateFooter'
+import { AboutPageTracker } from './AboutPageTracker'
 
 export const metadata = {
   title: 'About - Financial Freedom',
@@ -11,6 +12,9 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* Track page view */}
+      <AboutPageTracker />
+
       {/* Navigation */}
       <HomeNavigation />
 

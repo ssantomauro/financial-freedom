@@ -4,6 +4,8 @@ import { getUser } from '@/lib/auth/getUser'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/db/prisma'
 import { CalculationHistory } from '@/components/dashboard/CalculationHistory'
+import { PostHogIdentifier } from '@/components/analytics/PostHogIdentifier'
+import { DashboardTracker } from '@/components/analytics/DashboardTracker'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,6 +26,17 @@ export default async function DashboardPage() {
 
   return (
     <div className="py-12 px-4">
+      {/* Identify user with PostHog */}
+      <PostHogIdentifier
+        userId={user.id}
+        email={user.email}
+        name={user.user_metadata?.full_name || user.user_metadata?.name}
+        hasLifetimeAccess={hasLifetimeAccess}
+      />
+
+      {/* Track dashboard view */}
+      <DashboardTracker />
+
       <div className="max-w-7xl mx-auto">
         {/* Welcome Section */}
         <div className="mb-12">

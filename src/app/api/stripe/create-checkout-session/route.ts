@@ -55,12 +55,15 @@ export async function POST(request: Request) {
       metadata: {
         userId: user.id,
         userEmail: user.email || '',
+        // Track payment initiated event on server side
+        eventName: 'payment_initiated',
       },
     })
 
     return NextResponse.json({
       sessionId: session.id,
-      url: session.url
+      url: session.url,
+      userId: user.id, // Send userId back for client-side tracking
     })
   } catch (error) {
     console.error('Stripe checkout error:', error)

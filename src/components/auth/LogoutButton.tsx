@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
 
 interface LogoutButtonProps {
   className?: string
@@ -11,6 +12,7 @@ interface LogoutButtonProps {
 export function LogoutButton({ className = '', children }: LogoutButtonProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const { trackEvent, resetUser } = usePostHog()
 
   const handleLogout = async () => {
     setIsLoading(true)
@@ -21,6 +23,12 @@ export function LogoutButton({ className = '', children }: LogoutButtonProps) {
       })
 
       if (response.ok) {
+        // Track logout
+        trackEvent(AnalyticsEvents.LOGOUT)
+
+        // Reset PostHog user identity
+        resetUser()
+
         router.push('/login')
         router.refresh()
       } else {

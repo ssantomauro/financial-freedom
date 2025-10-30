@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Clock, ChevronRight, Calculator, ArrowLeft, Filter } from 'lucide-react'
+import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
 
 interface Calculation {
   id: string
@@ -35,6 +36,14 @@ export function CalculationHistoryFull() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filterType, setFilterType] = useState<string | null>(null)
+  const { trackEvent } = usePostHog()
+
+  useEffect(() => {
+    // Track history page view
+    trackEvent(AnalyticsEvents.HISTORY_PAGE_VIEWED, {
+      filter: filterType || 'all'
+    })
+  }, [filterType, trackEvent])
 
   useEffect(() => {
     fetchHistory()
@@ -169,6 +178,12 @@ export function CalculationHistoryFull() {
               <Link
                 key={calc.id}
                 href={`/calculators/${calc.calculatorType}?calculation=${calc.id}`}
+                onClick={() => {
+                  trackEvent(AnalyticsEvents.PAST_CALCULATION_OPENED, {
+                    calculator: calc.calculatorType,
+                    calculation_id: calc.id,
+                  })
+                }}
                 className="block bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-400 hover:shadow-md transition group"
               >
                 <div className="flex items-center justify-between">

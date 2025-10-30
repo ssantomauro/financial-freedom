@@ -340,7 +340,7 @@ export function BuyVsRentCalculator() {
           <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <p className="text-yellow-800 font-medium">
-                You've used all {usageStatus.calculationsUsed} free calculations. Upgrade to lifetime access for unlimited calculations!
+                You've used all 3 free calculations. Upgrade to lifetime access for unlimited calculations!
               </p>
               <button
                 onClick={() => setShowPaywall(true)}

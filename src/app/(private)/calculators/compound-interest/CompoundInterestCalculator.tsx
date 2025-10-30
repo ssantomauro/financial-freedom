@@ -9,8 +9,10 @@ import { TrendingUp, DollarSign, Percent, ArrowLeft } from 'lucide-react'
 import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
 
 interface UsageStatus {
-  remainingCalculations: number
+  canUse: boolean
   hasLifetimeAccess: boolean
+  calculationsUsed: number
+  remainingCalculations: number
 }
 
 interface CompoundInterestCalculatorProps {
@@ -37,7 +39,7 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
     const fetchData = async () => {
       try {
         // Fetch usage status
-        const statusRes = await fetch('/api/calculations/usage-status')
+        const statusRes = await fetch('/api/calculations/usage-status?calculatorType=compound-interest')
         if (statusRes.ok) {
           const statusData = await statusRes.json()
           setUsageStatus(statusData)
@@ -116,7 +118,7 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
         })
 
         // Update usage status
-        const statusRes = await fetch('/api/calculations/usage-status')
+        const statusRes = await fetch('/api/calculations/usage-status?calculatorType=compound-interest')
         if (statusRes.ok) {
           const newStatus = await statusRes.json()
           setUsageStatus(newStatus)
@@ -168,11 +170,6 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Compound Interest Calculator</h1>
-              {usageStatus && !usageStatus.hasLifetimeAccess && (
-                <p className="text-sm text-gray-600 mt-1">
-                  {usageStatus.remainingCalculations} free {usageStatus.remainingCalculations === 1 ? 'calculation' : 'calculations'} remaining
-                </p>
-              )}
             </div>
           </div>
           <p className="text-lg text-gray-600 mb-6">
@@ -189,14 +186,54 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
           </div>
         </div>
 
+        {/* Usage Status Banner */}
+        {usageStatus && !usageStatus.hasLifetimeAccess && usageStatus.remainingCalculations === 0 && (
+          <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <p className="text-yellow-800 font-medium">
+                You've used all 3 free calculations. Upgrade to lifetime access for unlimited calculations!
+              </p>
+              <button
+                onClick={() => setShowPaywall(true)}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap"
+              >
+                Upgrade Now
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-5 gap-8">
           {/* Form - Left Side */}
           <div className="lg:col-span-2">
             <CompoundInterestForm
               onSubmit={handleCalculate}
-              isDisabled={isLoading}
+              isDisabled={isLoading || (usageStatus ? !usageStatus.canUse : false)}
               initialValues={initialValues}
             />
+
+            {/* Remaining Calculations Info */}
+            {usageStatus && !usageStatus.hasLifetimeAccess && usageStatus.remainingCalculations > 0 && (
+              <div className="text-center mt-4">
+                <p className="text-sm text-gray-600">
+                  {usageStatus.remainingCalculations === 3 ? (
+                    <>You have <strong className="text-blue-600">{usageStatus.remainingCalculations} free calculations</strong> remaining</>
+                  ) : usageStatus.remainingCalculations === 1 ? (
+                    <>This is your <strong className="text-orange-600">last free calculation</strong></>
+                  ) : (
+                    <>You have <strong className="text-orange-600">{usageStatus.remainingCalculations} free calculations</strong> remaining</>
+                  )}
+                </p>
+              </div>
+            )}
+
+            {usageStatus && usageStatus.hasLifetimeAccess && (
+              <div className="text-center mt-4">
+                <p className="text-sm text-green-600 font-medium">
+                  ✓ You have unlimited calculations
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Results - Right Side */}

@@ -78,7 +78,8 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
                 min="0"
                 value={formData.initialAmount}
                 onChange={(e) => handleChange('initialAmount', e.target.value)}
-                className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                disabled={isDisabled}
+                className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 required
               />
             </div>
@@ -99,7 +100,8 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
                 min="0"
                 value={formData.monthlyContribution}
                 onChange={(e) => handleChange('monthlyContribution', e.target.value)}
-                className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                disabled={isDisabled}
+                className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 required
               />
             </div>
@@ -132,7 +134,8 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
                 max="30"
                 value={formData.annualReturn}
                 onChange={(e) => handleChange('annualReturn', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                disabled={isDisabled}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 required
               />
             </div>
@@ -154,7 +157,8 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
                 max="50"
                 value={formData.years}
                 onChange={(e) => handleChange('years', e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                disabled={isDisabled}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 required
               />
             </div>
@@ -170,7 +174,8 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
               id="compoundingFrequency"
               value={formData.compoundingFrequency}
               onChange={(e) => setFormData(prev => ({ ...prev, compoundingFrequency: e.target.value as any }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              disabled={isDisabled}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
             >
               <option value="monthly">Monthly</option>
               <option value="quarterly">Quarterly</option>
@@ -196,7 +201,8 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
               type="checkbox"
               checked={formData.includeInflation}
               onChange={(e) => handleChange('includeInflation', e.target.checked)}
-              className="mt-1 w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-2 focus:ring-green-500"
+              disabled={isDisabled}
+              className="mt-1 w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-2 focus:ring-green-500 disabled:cursor-not-allowed"
             />
             <div>
               <label htmlFor="includeInflation" className="block text-sm font-medium text-gray-900 cursor-pointer">
@@ -224,7 +230,8 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
                   max="20"
                   value={formData.inflationRate}
                   onChange={(e) => handleChange('inflationRate', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  disabled={isDisabled}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                   required
                 />
               </div>
@@ -237,7 +244,7 @@ export function CompoundInterestForm({ onSubmit, isDisabled, initialValues }: Co
       <button
         type="submit"
         disabled={isDisabled}
-        className="w-full bg-green-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+        className="w-full bg-green-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-green-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed shadow-lg hover:shadow-xl disabled:hover:bg-gray-400 disabled:hover:shadow-lg"
       >
         Calculate Growth
       </button>

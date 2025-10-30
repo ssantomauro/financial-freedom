@@ -23,12 +23,12 @@ const CALCULATOR_NAMES: { [key: string]: string } = {
 }
 
 const CALCULATOR_COLORS: { [key: string]: string } = {
-  'buy-vs-rent': 'bg-blue-100 text-blue-600',
-  'compound-interest': 'bg-green-100 text-green-600',
-  'retirement': 'bg-purple-100 text-purple-600',
-  'savings': 'bg-orange-100 text-orange-600',
-  'children-savings': 'bg-pink-100 text-pink-600',
-  'mortgage': 'bg-indigo-100 text-indigo-600',
+  'buy-vs-rent': 'bg-blue-500 text-white',
+  'compound-interest': 'bg-green-500 text-white',
+  'retirement': 'bg-purple-500 text-white',
+  'savings': 'bg-orange-500 text-white',
+  'children-savings': 'bg-pink-500 text-white',
+  'mortgage': 'bg-indigo-500 text-white',
 }
 
 const CALCULATOR_ICONS: { [key: string]: any } = {

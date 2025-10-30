@@ -42,6 +42,7 @@ const CALCULATOR_ICONS: { [key: string]: any } = {
 
 export function CalculationHistoryFull() {
   const [calculations, setCalculations] = useState<Calculation[]>([])
+  const [allCalculations, setAllCalculations] = useState<Calculation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filterType, setFilterType] = useState<string | null>(null)
@@ -69,6 +70,11 @@ export function CalculationHistoryFull() {
       if (response.ok) {
         const data = await response.json()
         setCalculations(data.calculations)
+
+        // Store all calculations for filter options (only on first load)
+        if (!filterType && allCalculations.length === 0) {
+          setAllCalculations(data.calculations)
+        }
       } else {
         const error = await response.json()
         setError(error.error || 'Failed to load history')
@@ -81,8 +87,9 @@ export function CalculationHistoryFull() {
     }
   }
 
+  // Calculate unique types from all calculations to keep filter visible
   const uniqueCalculatorTypes = Array.from(
-    new Set(calculations.map(calc => calc.calculatorType))
+    new Set((allCalculations.length > 0 ? allCalculations : calculations).map(calc => calc.calculatorType))
   )
 
   return (

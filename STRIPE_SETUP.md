@@ -186,7 +186,7 @@ Before switching from test mode to live mode:
 ## Pricing Configuration
 
 Current pricing in the code:
-- **Amount**: $9.00 USD (one-time payment - promotional pricing for first 100 users)
+- **Amount**: $9.90 USD (one-time payment - promotional pricing for first 100 users)
 - **Location**: `src/app/api/stripe/create-checkout-session/route.ts`
 - **Line**: `unit_amount: 900` (in cents)
 

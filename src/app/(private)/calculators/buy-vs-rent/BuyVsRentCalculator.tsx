@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { Home, ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react'
 import { BuyVsRentForm, BuyVsRentInputs } from '@/components/calculator/BuyVsRentForm'
 import { PaywallModal } from '@/components/calculator/PaywallModal'
+import {LabelWithTooltip} from "@/components/ui/LabelWithTooltip";
 
 interface UsageStatus {
   canUse: boolean
@@ -16,14 +17,17 @@ interface UsageStatus {
 
 interface CalculationResult {
   buyingTotalCost: number
+  buyingNetWorth: number
   rentingTotalCost: number
+  rentingNetWorth: number
   buyingMonthlyPayment: number
-  rentingTotalPayment: number
+  buyingMonthlyLoan: number
+  monthlyRent: number
+  averageRentPaid: number
   homeValueAfterYears: number
   investmentValueIfRenting: number
   recommendation: 'buy' | 'rent'
   savings: number
-  breakEvenYear: number | null
 }
 
 export function BuyVsRentCalculator() {
@@ -92,86 +96,112 @@ export function BuyVsRentCalculator() {
       downPayment,
       interestRate,
       loanTerm,
+      closingCostsBuying,
+      closingCostsSelling,
       propertyTax,
+      pmiRate,
       homeInsurance,
       hoaFees,
-      maintenance,
+      maintenanceRate,
       monthlyRent,
       rentersInsurance,
       homeAppreciation,
       rentIncrease,
-      investmentReturn,
-      yearsToCompare,
+      investmentReturn
     } = inputs
 
-    // Calculate mortgage payment
-    const loanAmount = homePrice - downPayment
-    const monthlyRate = interestRate / 100 / 12
-    const numPayments = loanTerm * 12
-    const mortgagePayment =
-      (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
-      (Math.pow(1 + monthlyRate, numPayments) - 1)
+    // Stefano's calculation
+    const closingCostsPercent = closingCostsBuying / 100 || 0;
+    const closingCostsSellingPercent = closingCostsSelling / 100 || 0;
+    const mortgageRate = interestRate / 100 || 0;
+    const propertyTaxRate = propertyTax / 100 || 0;
+    const pmiRatePerc = pmiRate / 100 || 0;
+    const maintenancePercent = maintenanceRate / 100 || 0;
+    const appreciationRate = homeAppreciation / 100 || 0;
+    const assessedRate = 0.02;
+
+    const rentIncreaseRate = rentIncrease / 100 || 0;
+    const securityDeposit = monthlyRent || 0;
+    const investmentReturnRate = investmentReturn / 100 || 0;
+    const years = loanTerm || 10;
 
     // Calculate buying costs
-    const buyingMonthlyTotal = mortgagePayment + propertyTax + homeInsurance + hoaFees + maintenance
-    const buyingTotalPaid = buyingMonthlyTotal * 12 * yearsToCompare + downPayment
+    const downPaymentAmount = homePrice * (downPayment / 100);
+    const closingCosts = homePrice * closingCostsPercent;
+    let loanAmount = homePrice - downPaymentAmount;
+    const monthlyRate = mortgageRate / 12;
+    const numPayments = years * 12; // x-year mortgage
+    const monthlyMortgage = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+    const yearlyMortgage = monthlyMortgage * 12;
+    const totalMortgage = yearlyMortgage * years;
+    const costPMI = loanAmount * pmiRatePerc;
 
-    // Calculate home appreciation
-    const homeValueAfterYears = homePrice * Math.pow(1 + homeAppreciation / 100, yearsToCompare)
-    const equityBuilt = homeValueAfterYears - loanAmount // Simplified
+    // Check if we want to add
+    // document.getElementById('monthlyCost').value = parseInt(monthlyMortgage + ((downPayment < 20) ? costPMI/12 : 0) + (homePrice * propertyTaxRate/12) + (homeInsurance/12) + hoaFees + (homePrice * maintenancePercent/12));
 
-    // Calculate renting costs
-    let rentingTotalPaid = 0
-    let currentRent = monthlyRent
-    for (let year = 0; year < yearsToCompare; year++) {
-      rentingTotalPaid += (currentRent + rentersInsurance) * 12
-      currentRent *= 1 + rentIncrease / 100
+    let totalBuyingCosts = downPaymentAmount + closingCosts; // Include closing costs in initial investment
+    let realTotalBuyingCosts = 0;
+    let totalRentingCosts = securityDeposit;
+    let remainingLoanBalance = loanAmount;
+
+    let totalPaidMortgage = 0;
+    let marketHomeValue = homePrice;
+    let assessedHomeValue = homePrice;
+    let totalStockBalance = downPaymentAmount + closingCosts; // Invest entire home price in stocks
+
+    let lastYearlyRent = monthlyRent * 12;
+
+    let netWealth = 0;
+    let rentWealth = 0;
+
+    for (let year = 1; year <= years; year++) {
+      // Buying calculations
+      totalPaidMortgage += yearlyMortgage;
+      const yearlyPropertyTax = assessedHomeValue * propertyTaxRate;
+      const yearlyMaintenance = marketHomeValue * maintenancePercent;
+
+      const yearlyBuyingCosts = yearlyMortgage + yearlyPropertyTax + homeInsurance + yearlyMaintenance + (hoaFees * 12);
+      totalBuyingCosts += yearlyBuyingCosts;
+
+      marketHomeValue *= (1 + appreciationRate);
+      assessedHomeValue *= (1 + assessedRate);
+
+      const homeEquity = marketHomeValue - (totalMortgage - totalPaidMortgage);
+
+      // Investment growth (monthly contributions equal to mortgage payment difference)
+      const yearlyInvestmentContribution = yearlyBuyingCosts - lastYearlyRent;
+
+      // Stock-only investment (compound growth of entire home price)
+      totalStockBalance = (year > 1) ? (totalStockBalance + yearlyInvestmentContribution) * (1 + investmentReturnRate) : totalStockBalance * (1 + investmentReturnRate);
+
+      // Renting calculations
+      if (year > 1)
+        lastYearlyRent = lastYearlyRent * (1 + rentIncreaseRate);
+      totalRentingCosts += lastYearlyRent;
+
+      realTotalBuyingCosts = totalBuyingCosts + ((downPayment < 20 && totalPaidMortgage < totalMortgage * 0.8) ? costPMI : 0);
+      netWealth = homeEquity + downPayment - realTotalBuyingCosts;
+      rentWealth = totalStockBalance - totalRentingCosts;
     }
 
-    // Calculate investment value if renting (down payment invested)
-    const investmentValueIfRenting =
-      downPayment * Math.pow(1 + investmentReturn / 100, yearsToCompare)
-
-    // Net positions
-    const buyingNetPosition = homeValueAfterYears - buyingTotalPaid
-    const rentingNetPosition = investmentValueIfRenting - rentingTotalPaid
-
-    // Determine recommendation
-    const savings = Math.abs(buyingNetPosition - rentingNetPosition)
-    const recommendation = buyingNetPosition > rentingNetPosition ? 'buy' : 'rent'
-
-    // Calculate break-even year (simplified)
-    let breakEvenYear = null
-    for (let year = 1; year <= yearsToCompare; year++) {
-      const buyValue = homePrice * Math.pow(1 + homeAppreciation / 100, year)
-      const buyCost = buyingMonthlyTotal * 12 * year + downPayment
-      const buyNet = buyValue - buyCost
-
-      let rentCost = 0
-      let rent = monthlyRent
-      for (let y = 0; y < year; y++) {
-        rentCost += (rent + rentersInsurance) * 12
-        rent *= 1 + rentIncrease / 100
-      }
-      const investValue = downPayment * Math.pow(1 + investmentReturn / 100, year)
-      const rentNet = investValue - rentCost
-
-      if (buyNet >= rentNet && !breakEvenYear) {
-        breakEvenYear = year
-        break
-      }
-    }
+    const buyingMonthlyTotal = realTotalBuyingCosts / loanTerm / 12;
+    const averageRentPaid = totalRentingCosts / loanTerm / 12;
+    const buyingNetWorth = marketHomeValue - realTotalBuyingCosts - (marketHomeValue * closingCostsSellingPercent);
+    const rentingNetWorth = totalStockBalance - totalRentingCosts;
 
     return {
-      buyingTotalCost: buyingTotalPaid,
-      rentingTotalCost: rentingTotalPaid,
+      buyingTotalCost: realTotalBuyingCosts,
+      buyingNetWorth: buyingNetWorth,
+      rentingTotalCost: totalRentingCosts,
+      rentingNetWorth: rentingNetWorth,
+      buyingMonthlyLoan: monthlyMortgage,
       buyingMonthlyPayment: buyingMonthlyTotal,
-      rentingTotalPayment: rentingTotalPaid,
-      homeValueAfterYears,
-      investmentValueIfRenting,
-      recommendation,
-      savings,
-      breakEvenYear,
+      homeValueAfterYears: marketHomeValue,
+      investmentValueIfRenting: totalStockBalance,
+      recommendation: buyingNetWorth > rentingNetWorth ? 'buy' : 'rent',
+      savings: Math.abs(buyingNetWorth - rentingNetWorth),
+      monthlyRent: monthlyRent,
+      averageRentPaid: averageRentPaid,
     }
   }
 
@@ -344,12 +374,12 @@ export function BuyVsRentCalculator() {
                       style: 'currency',
                       currency: 'USD',
                       maximumFractionDigits: 0,
-                    })} over the time period.`
+                    })} over the time period examined (Loan Term years).`
                   : `Renting could save you ${result.savings.toLocaleString('en-US', {
                       style: 'currency',
                       currency: 'USD',
                       maximumFractionDigits: 0,
-                    })} over the time period.`}
+                    })} over the time period examined (Loan Term years)`}
               </p>
             </div>
 
@@ -360,16 +390,11 @@ export function BuyVsRentCalculator() {
                 <h4 className="text-xl font-bold text-gray-900 mb-4">Buying</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Monthly Payment:</span>
-                    <span className="font-semibold">
-                      {result.buyingMonthlyPayment.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Total Paid:</span>
+                    <LabelWithTooltip
+                        className="text-gray-600"
+                        label="Total Paid:"
+                        tooltip="This is the total amount you will pay to have that house over the loan term. It is calculated by summing up monthly loan, closing costs, HOA fees, and so on"
+                    />
                     <span className="font-semibold">
                       {result.buyingTotalCost.toLocaleString('en-US', {
                         style: 'currency',
@@ -379,9 +404,49 @@ export function BuyVsRentCalculator() {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Home Value:</span>
-                    <span className="font-semibold text-green-600">
+                    <span className="text-gray-600">Monthly Loan:</span>
+                    <span className="font-semibold">
+                      {result.buyingMonthlyLoan.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <LabelWithTooltip
+                        className="text-gray-600"
+                        label={`Average Monthly Payment:`}
+                        tooltip="This is the average monthly payment that you will actually pay to have that house over the loan term. It is calculated by dividing the 'Total Paid' by the number of months"
+                    />
+                    <span className="font-semibold">
+                      {result.buyingMonthlyPayment.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <LabelWithTooltip
+                        className="text-gray-600"
+                        label="Home Market Value:"
+                        tooltip="The estimated market value of the house after the loan term"
+                    />
+                    <span className="font-semibold">
                       {result.homeValueAfterYears.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <LabelWithTooltip
+                        className="text-gray-600"
+                        label="Net Worth:"
+                        tooltip="The estimated market value of the house after the loan term"
+                    />
+                    <span className="font-semibold text-green-600">
+                      {result.buyingNetWorth.toLocaleString('en-US', {
                         style: 'currency',
                         currency: 'USD',
                         maximumFractionDigits: 0,
@@ -396,7 +461,11 @@ export function BuyVsRentCalculator() {
                 <h4 className="text-xl font-bold text-gray-900 mb-4">Renting</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Total Rent Paid:</span>
+                    <LabelWithTooltip
+                        className="text-gray-600"
+                        label={`Total Rent Paid:`}
+                        tooltip="Total amount paid to rent the house over the loan term. This is the sum of the monthly rent and the security deposit, also considering the 'Rent Increase Rate'"
+                    />
                     <span className="font-semibold">
                       {result.rentingTotalCost.toLocaleString('en-US', {
                         style: 'currency',
@@ -406,9 +475,55 @@ export function BuyVsRentCalculator() {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Investment Value:</span>
-                    <span className="font-semibold text-green-600">
+                    <LabelWithTooltip
+                        className="text-gray-600"
+                        label={`Monthly Rent:`}
+                        tooltip="The initial rent"
+                    />
+                    <span className="font-semibold">
+                      {result.monthlyRent.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <LabelWithTooltip
+                        className="text-gray-600"
+                        label={`Average Rent Paid:`}
+                        tooltip="This is the average rent payment that you will actually pay to rent the house over the loan term. It is calculated by dividing the 'Total Rent Paid' by the number of months"
+                    />
+                    <span className="font-semibold">
+                      {result.averageRentPaid.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <LabelWithTooltip
+                        className="text-gray-600"
+                        label={`Investment Value:`}
+                        tooltip="This is the money you will have after the loan term investing the amount saved every month if you won't buy"
+                    />
+                    <span className="font-semibold">
                       {result.investmentValueIfRenting.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <LabelWithTooltip
+                        className="text-gray-600"
+                        label={`Net Worth:`}
+                        tooltip="This is the money you will have after the loan term investing the amount saved every month if you won't buy"
+                    />
+                    <span className="font-semibold text-green-600">
+                      {result.rentingNetWorth.toLocaleString('en-US', {
                         style: 'currency',
                         currency: 'USD',
                         maximumFractionDigits: 0,
@@ -420,13 +535,13 @@ export function BuyVsRentCalculator() {
             </div>
 
             {/* Break-even */}
-            {result.breakEvenYear && (
-              <div className="mt-6 text-center">
-                <p className="text-gray-700">
-                  <span className="font-semibold">Break-even point:</span> Year {result.breakEvenYear}
-                </p>
-              </div>
-            )}
+            {/*{result.breakEvenYear && (*/}
+            {/*  <div className="mt-6 text-center">*/}
+            {/*    <p className="text-gray-700">*/}
+            {/*      <span className="font-semibold">Break-even point:</span> Year {result.breakEvenYear}*/}
+            {/*    </p>*/}
+            {/*  </div>*/}
+            {/*)}*/}
           </div>
         )}
 

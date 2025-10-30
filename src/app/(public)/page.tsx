@@ -32,8 +32,8 @@ export default async function HomePage() {
             </h1>
 
             <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Free tools to help you plan for retirement, compare rent vs. buy, calculate compound interest,
-              and make confident financial decisions for your family's future.
+              Simple tools to help you plan for retirement, compare rent vs. buy, calculate compound interest,
+              and make confident financial decisions
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -41,7 +41,7 @@ export default async function HomePage() {
                   href="/signup"
                   className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
               >
-                Start Calculating Free
+                Start For Free
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
@@ -52,20 +52,20 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="mt-12 flex items-center justify-center gap-8 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                No Credit Card Required
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                100% Free Forever
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                Trusted by 50,000+ Users
-              </div>
-            </div>
+            {/*<div className="mt-12 flex items-center justify-center gap-8 text-sm text-gray-600">*/}
+            {/*  <div className="flex items-center gap-2">*/}
+            {/*    <CheckCircle className="w-5 h-5 text-green-500" />*/}
+            {/*    No Credit Card Required*/}
+            {/*  </div>*/}
+            {/*  <div className="flex items-center gap-2">*/}
+            {/*    <CheckCircle className="w-5 h-5 text-green-500" />*/}
+            {/*    100% Free Forever*/}
+            {/*  </div>*/}
+            {/*  <div className="flex items-center gap-2">*/}
+            {/*    <CheckCircle className="w-5 h-5 text-green-500" />*/}
+            {/*    Trusted by 50,000+ Users*/}
+            {/*  </div>*/}
+            {/*</div>*/}
           </div>
         </section>
 
@@ -77,7 +77,7 @@ export default async function HomePage() {
                 All Your Financial Tools in One Place
               </h2>
               <p className="text-xl text-gray-600">
-                Choose a calculator and start making smarter financial decisions
+                Choose a calculator and start making informed financial decisions
               </p>
             </div>
 
@@ -206,7 +206,6 @@ export default async function HomePage() {
             <div className="grid md:grid-cols-4 gap-8 mb-8">
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="w-6 h-6 text-blue-500" />
                   <span className="text-white font-bold text-lg">Financial Freedom</span>
                 </div>
                 <p className="text-sm">
@@ -215,21 +214,20 @@ export default async function HomePage() {
               </div>
 
               <div>
-                <h4 className="text-white font-semibold mb-4">Calculators</h4>
+                <h4 className="text-white font-semibold mb-4">Top Calculators</h4>
                 <ul className="space-y-2 text-sm">
                   <li><Link href="/buy-vs-rent" className="hover:text-white">Buy vs Rent</Link></li>
                   <li><Link href="/compound-interest" className="hover:text-white">Compound Interest</Link></li>
                   <li><Link href="/retirement" className="hover:text-white">Retirement Planning</Link></li>
-                  <li><Link href="/savings" className="hover:text-white">Savings Goals</Link></li>
                 </ul>
               </div>
 
               <div>
-                <h4 className="text-white font-semibold mb-4">Company</h4>
+                <h4 className="text-white font-semibold mb-4">Project</h4>
                 <ul className="space-y-2 text-sm">
                   <li><Link href="/about" className="hover:text-white">About Us</Link></li>
                   <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-                  <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
+                  {/*<li><Link href="/blog" className="hover:text-white">Blog</Link></li>*/}
                 </ul>
               </div>
 

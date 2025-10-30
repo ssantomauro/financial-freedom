@@ -16,21 +16,20 @@ export function PrivateFooter() {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Calculators</h4>
+            <h4 className="text-white font-semibold mb-4">Top Calculators</h4>
             <ul className="space-y-2 text-sm">
               <li><Link href="/calculators/buy-vs-rent" className="hover:text-white">Buy vs Rent</Link></li>
               <li><Link href="/calculators/compound-interest" className="hover:text-white">Compound Interest</Link></li>
               <li><Link href="/calculators/retirement" className="hover:text-white">Retirement Planning</Link></li>
-              <li><Link href="/calculators/savings" className="hover:text-white">Savings Goals</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Company</h4>
+            <h4 className="text-white font-semibold mb-4">Project</h4>
             <ul className="space-y-2 text-sm">
               <li><Link href="/about" className="hover:text-white">About Us</Link></li>
               <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-              <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
+              {/*<li><Link href="/blog" className="hover:text-white">Blog</Link></li>*/}
             </ul>
           </div>
 

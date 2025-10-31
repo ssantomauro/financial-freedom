@@ -419,7 +419,7 @@ export default async function BuyVsRentLandingPage() {
       <section className="py-20 px-4 bg-gradient-to-br from-blue-600 to-purple-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to Make the Right Decision?
+            Ready to Calculate Your Decision?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
             Join other smart home buyers and renters who made informed decisions with our calculator

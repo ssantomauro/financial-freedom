@@ -1,5 +1,6 @@
 import { PrivateHeader } from '@/components/layout/PrivateHeader'
 import { PrivateFooter } from '@/components/layout/PrivateFooter'
+import { AuthenticatedFeedbackButton } from '@/components/feedback/AuthenticatedFeedbackButton'
 
 export default function PrivateLayout({ children }: {
     children: React.ReactNode
@@ -11,6 +12,7 @@ export default function PrivateLayout({ children }: {
                 {children}
             </main>
             <PrivateFooter />
+            <AuthenticatedFeedbackButton />
         </div>
     )
 }

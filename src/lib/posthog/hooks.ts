@@ -59,4 +59,9 @@ export const AnalyticsEvents = {
   HISTORY_PAGE_VIEWED: 'history_page_viewed',
   CONTACT_PAGE_VIEWED: 'contact_page_viewed',
   ABOUT_PAGE_VIEWED: 'about_page_viewed',
+
+  // Feedback
+  FEEDBACK_SUBMITTED: 'feedback_submitted',
+  FEEDBACK_BUTTON_OPENED: 'feedback_button_opened',
+  FEEDBACK_BUTTON_CLOSED: 'feedback_button_closed',
 }

@@ -112,8 +112,8 @@ export function PaywallModal({ isOpen, onClose, calculatorName }: PaywallModalPr
             <div className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl">
               <div className="text-xs font-medium mb-1">One-time payment</div>
               <div className="flex items-center justify-center gap-2">
-                <div className="text-xl font-bold line-through opacity-60">$29.90</div>
-                <div className="text-3xl font-bold">$9.90</div>
+                <div className="text-xl font-bold line-through opacity-60">$19.90</div>
+                <div className="text-3xl font-bold">$4.90</div>
               </div>
               <div className="text-xs mt-1.5 bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded-full inline-block font-semibold">
                 First 100 users only!

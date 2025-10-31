@@ -145,8 +145,8 @@ export default async function HomePage() {
                 </h2>
                 <div className="space-y-6">
                   <BenefitItem
-                      title="100% Free Forever"
-                      description="No hidden fees, no premium tiers. All tools are completely free for everyone."
+                      title="Start For Free"
+                      description="3 calculations for free, for each calculator."
                   />
                   <BenefitItem
                       title="No Financial Expertise Needed"

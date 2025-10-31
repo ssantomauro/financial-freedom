@@ -42,7 +42,7 @@ export async function POST(request: Request) {
               description: 'Unlimited calculations on all calculators, calculation history, and all future features',
               images: [`${origin}/logo.png`], // Add your logo URL
             },
-            unit_amount: 990, // $9.90 in cents
+            unit_amount: 490, // $4.90 in cents
           },
           quantity: 1,
         },

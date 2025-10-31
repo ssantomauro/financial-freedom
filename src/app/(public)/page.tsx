@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Calculator, TrendingUp, Home, Baby, PiggyBank, Target, ArrowRight, CheckCircle, Sparkles } from 'lucide-react'
+import { Calculator, TrendingUp, Home, Baby, PiggyBank, Target, ArrowRight, CheckCircle, Sparkles, Zap } from 'lucide-react'
 import { HomeNavigation } from '@/components/layout/HomeNavigation'
 import {getUser} from "@/lib/auth/getUser";
 import {redirect} from "next/navigation";
@@ -135,8 +135,96 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* Pricing Section */}
+        <section id="pricing" className="py-20 px-4 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Special Launch Pricing</h2>
+              <p className="text-xl text-gray-600">Limited time offer for the first 100 users</p>
+            </div>
+
+            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+              {/* Free Plan */}
+              <div className="bg-white rounded-2xl p-8 border-2 border-gray-200">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Free Trial</h3>
+                <div className="mb-6">
+                  <div className="text-4xl font-bold text-gray-900">$0</div>
+                  <div className="text-gray-600">Try before you buy</div>
+                </div>
+                <ul className="space-y-4 mb-8">
+                  {[
+                    '3 free calculations per calculator',
+                    'Full feature access',
+                    'Comprehensive analysis',
+                    'No credit card required',
+                  ].map((feature, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                  ))}
+                </ul>
+                <Link
+                    href="/signup"
+                    className="block w-full bg-gray-100 text-gray-900 text-center px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
+                >
+                  Start Free Trial
+                </Link>
+              </div>
+
+              {/* Lifetime Plan */}
+              <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 border-2 border-blue-700 relative">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <div className="bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                    <Zap className="w-4 h-4" />
+                    BEST VALUE - 75% OFF
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Lifetime Access</h3>
+                <div className="mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl text-white/70 line-through">$19.90</div>
+                    <div className="text-5xl font-bold text-white">$4.90</div>
+                  </div>
+                  <div className="text-blue-100">One-time payment, forever</div>
+                </div>
+                <ul className="space-y-4 mb-8">
+                  {[
+                    'Unlimited calculations',
+                    'Save & review history',
+                    'All calculators included',
+                    'All future features',
+                    'Priority support',
+                    'No recurring fees',
+                  ].map((feature, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                        <span className="text-white">{feature}</span>
+                      </li>
+                  ))}
+                </ul>
+                <Link
+                    href="/signup"
+                    className="block w-full bg-white text-blue-600 text-center px-6 py-3 rounded-lg font-bold hover:bg-blue-50 transition shadow-lg"
+                >
+                  Get Lifetime Access - $4.90
+                </Link>
+                <p className="text-center text-blue-100 text-sm mt-4">
+                  ⚡ Only 43 spots left at this price!
+                </p>
+              </div>
+            </div>
+
+            <div className="text-center mt-12">
+              <p className="text-gray-600">
+                🔒 Secure payment • 💯 30-day money-back guarantee
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Benefits Section */}
-        <section className="py-20 px-4 bg-white">
+        <section className="py-20 px-4 bg-blue-50">
           <div className="max-w-7xl mx-auto">
             <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>

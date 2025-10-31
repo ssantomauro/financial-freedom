@@ -143,3 +143,133 @@ You can reply directly to ${userEmail} if needed.
 
   return await transporter.sendMail(mailOptions)
 }
+
+export interface VerificationEmailData {
+  email: string
+  name?: string | null
+  verificationUrl: string
+}
+
+export async function sendVerificationEmail(data: VerificationEmailData) {
+  const { email, name, verificationUrl } = data
+
+  const emailHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          color: #333;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        .header {
+          background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+          color: white;
+          padding: 30px 20px;
+          border-radius: 8px 8px 0 0;
+          text-align: center;
+        }
+        .content {
+          background: white;
+          padding: 30px 20px;
+          border: 1px solid #e5e7eb;
+          border-top: none;
+          border-radius: 0 0 8px 8px;
+        }
+        .button {
+          display: inline-block;
+          background: #2563eb;
+          color: #ffffff !important;
+          padding: 14px 28px;
+          text-decoration: none;
+          border-radius: 6px;
+          font-weight: bold;
+          margin: 20px 0;
+        }
+        .button:hover {
+          background: #1d4ed8;
+        }
+        .footer {
+          margin-top: 30px;
+          padding-top: 20px;
+          border-top: 1px solid #e5e7eb;
+          color: #6b7280;
+          font-size: 14px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 style="margin: 0; font-size: 28px;">✉️ Verify Your Email</h1>
+        </div>
+        <div class="content">
+          <p style="font-size: 16px; margin-bottom: 10px;">
+            Hi${name ? ` ${name}` : ''},
+          </p>
+          <p style="font-size: 16px;">
+            Thank you for signing up for <strong>Financial Freedom</strong>! We're excited to help you make smarter financial decisions.
+          </p>
+          <p style="font-size: 16px;">
+            To complete your registration and start using all our calculators, please verify your email address by clicking the button below:
+          </p>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${verificationUrl}" class="button">Verify Email Address</a>
+          </div>
+
+          <p style="font-size: 14px; color: #6b7280;">
+            Or copy and paste this link into your browser:
+          </p>
+          <p style="font-size: 14px; color: #2563eb; word-break: break-all;">
+            ${verificationUrl}
+          </p>
+
+          <div class="footer">
+            <p style="margin: 0 0 10px 0;">
+              This verification link will expire in <strong>24 hours</strong>.
+            </p>
+            <p style="margin: 0;">
+              If you didn't create an account with Financial Freedom, you can safely ignore this email.
+            </p>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+
+  const emailText = `
+Hi${name ? ` ${name}` : ''},
+
+Thank you for signing up for Financial Freedom! We're excited to help you make smarter financial decisions.
+
+To complete your registration and start using all our calculators, please verify your email address by clicking the link below:
+
+${verificationUrl}
+
+This verification link will expire in 24 hours.
+
+If you didn't create an account with Financial Freedom, you can safely ignore this email.
+
+---
+Financial Freedom
+${process.env.NEXT_PUBLIC_APP_URL}
+  `
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'Verify your email - Financial Freedom',
+    text: emailText,
+    html: emailHtml,
+  }
+
+  return await transporter.sendMail(mailOptions)
+}

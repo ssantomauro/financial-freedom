@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
+import { sendVerificationEmail } from '@/lib/email/mailer'
 
 export async function POST(request: Request) {
   try {
@@ -35,6 +37,10 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
 
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex')
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+
     // Create user
     const user = await prisma.user.create({
       data: {
@@ -45,11 +51,35 @@ export async function POST(request: Request) {
       },
     })
 
+    // Create verification token in database
+    await prisma.verificationToken.create({
+      data: {
+        identifier: email,
+        token: verificationToken,
+        expires: verificationExpires,
+      },
+    })
+
+    // Send verification email
+    const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const verificationUrl = `${origin}/api/auth/verify-email?token=${verificationToken}`
+
+    try {
+      await sendVerificationEmail({
+        email,
+        name: name || null,
+        verificationUrl,
+      })
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError)
+      // Don't fail the signup if email fails to send
+    }
+
     return NextResponse.json({
       success: true,
       userId: user.id,
-      message: 'Account created successfully',
-      requiresEmailVerification: false, // We'll implement email verification later if needed
+      message: 'Account created successfully. Please check your email to verify your account.',
+      requiresEmailVerification: true,
     })
   } catch (error) {
     console.error('Signup error:', error)

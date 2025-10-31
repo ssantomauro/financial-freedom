@@ -102,7 +102,7 @@ export default async function BuyVsRentLandingPage() {
                 </div>
                 <div className="mt-6 text-center">
                   <p className="text-lg font-semibold text-gray-900">
-                    💡 Recommendation: <span className="text-green-600">Buying saves you $88,780</span>
+                    💡 Recommendation: <span className="text-green-600">Buying puts an extra $88,780 in your pocket</span>
                   </p>
                 </div>
               </div>

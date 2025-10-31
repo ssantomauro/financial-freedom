@@ -48,7 +48,16 @@ export default function LoginPage() {
         redirect: false,
       })
 
-      if (result?.ok) {
+      console.log('Login result:', result) // Debug log
+
+      if (result?.error) {
+        // Handle different error types
+        if (result.error === 'CredentialsSignin') {
+          setError('Invalid email or password')
+        } else {
+          setError(result.error)
+        }
+      } else if (result?.ok) {
         // Track successful login
         trackEvent(AnalyticsEvents.LOGIN_COMPLETED, {
           email,
@@ -61,7 +70,7 @@ export default function LoginPage() {
           router.refresh()
         }, 1000)
       } else {
-        setError(result?.error || 'Invalid email or password')
+        setError('Invalid email or password')
       }
     } catch (error) {
       console.error('Login error:', error)

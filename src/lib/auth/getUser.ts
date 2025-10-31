@@ -1,17 +1,12 @@
-import { createClient } from '@/lib/supabase/server'
-import { User } from '@supabase/supabase-js'
+import { auth } from "@/app/api/auth/[...nextauth]/route"
 
 /**
  * Get the current authenticated user on the server side
  * @returns User object or null if not authenticated
  */
-export async function getUser(): Promise<User | null> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  return user
+export async function getUser() {
+  const session = await auth()
+  return session?.user || null
 }
 
 /**
@@ -19,7 +14,7 @@ export async function getUser(): Promise<User | null> {
  * @returns User object
  * @throws Error if user is not authenticated
  */
-export async function requireUser(): Promise<User> {
+export async function requireUser() {
   const user = await getUser()
 
   if (!user) {
@@ -33,10 +28,5 @@ export async function requireUser(): Promise<User> {
  * Get user session
  */
 export async function getSession() {
-  const supabase = await createClient()
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  return session
+  return await auth()
 }

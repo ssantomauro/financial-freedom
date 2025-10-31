@@ -1,18 +1,10 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireAuth } from '@/lib/auth'
 import { prisma } from '@/lib/db/prisma'
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+    const user = await requireAuth()
 
     const body = await request.json()
     const { calculatorType, inputData, resultData } = body
@@ -24,22 +16,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Get the user from database
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseId: user.id },
-    })
-
-    if (!dbUser) {
-      return NextResponse.json(
-        { error: 'User not found in database' },
-        { status: 404 }
-      )
-    }
-
     // Save the calculation
     const calculation = await prisma.calculation.create({
       data: {
-        userId: dbUser.id,
+        userId: user.id,
         calculatorType,
         inputData,
         resultData: resultData || null,

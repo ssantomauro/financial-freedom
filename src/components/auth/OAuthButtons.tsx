@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { signIn } from 'next-auth/react'
 import { AuthButton } from './AuthButton'
 
 export function OAuthButtons() {
@@ -10,22 +11,7 @@ export function OAuthButtons() {
     setIsLoading(provider)
 
     try {
-      const response = await fetch('/api/auth/oauth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ provider }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok && data.url) {
-        window.location.href = data.url
-      } else {
-        alert(data.error || 'OAuth failed')
-        setIsLoading(null)
-      }
+      await signIn(provider, { callbackUrl: '/dashboard' })
     } catch (error) {
       console.error('OAuth error:', error)
       alert('An error occurred during authentication')

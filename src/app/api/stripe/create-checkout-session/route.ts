@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireAuth } from '@/lib/auth'
 import Stripe from 'stripe'
 
 const stripe = process.env.STRIPE_SECRET_KEY
@@ -17,15 +17,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+    const user = await requireAuth()
 
     // Get the origin for redirect URLs
     const origin = request.headers.get('origin') || 'http://localhost:3000'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { signOut } from 'next-auth/react'
 import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
 
 interface LogoutButtonProps {
@@ -10,7 +10,6 @@ interface LogoutButtonProps {
 }
 
 export function LogoutButton({ className = '', children }: LogoutButtonProps) {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const { trackEvent, resetUser } = usePostHog()
 
@@ -18,22 +17,13 @@ export function LogoutButton({ className = '', children }: LogoutButtonProps) {
     setIsLoading(true)
 
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-      })
+      // Track logout
+      trackEvent(AnalyticsEvents.LOGOUT)
 
-      if (response.ok) {
-        // Track logout
-        trackEvent(AnalyticsEvents.LOGOUT)
+      // Reset PostHog user identity
+      resetUser()
 
-        // Reset PostHog user identity
-        resetUser()
-
-        router.push('/login')
-        router.refresh()
-      } else {
-        console.error('Logout failed')
-      }
+      await signOut({ callbackUrl: '/' })
     } catch (error) {
       console.error('Logout error:', error)
     } finally {

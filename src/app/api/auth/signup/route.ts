@@ -1,6 +1,8 @@
-import { createClient } from '@/lib/supabase/server'
-import { syncUserToDatabase } from '@/lib/auth/syncUser'
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/db/prisma'
+import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
+import { sendVerificationEmail } from '@/lib/email/mailer'
 
 export async function POST(request: Request) {
   try {
@@ -13,55 +15,76 @@ export async function POST(request: Request) {
       )
     }
 
-    const supabase = await createClient()
-    const origin = request.headers.get('origin')
-
-    // Sign up the user with Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/api/auth/callback`,
-        data: {
-          name: name || null,
-          full_name: name || null, // Supabase uses this for display name
-        },
-      },
-    })
-
-    if (error) {
+    if (password.length < 6) {
       return NextResponse.json(
-        { error: error.message },
+        { error: 'Password must be at least 6 characters long' },
         { status: 400 }
       )
     }
 
-    // Sync user to database
-    if (data.user) {
-      try {
-        await syncUserToDatabase(data.user)
-      } catch (syncError) {
-        console.error('Failed to sync user to database:', syncError)
-        // Don't fail the request if sync fails
-      }
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    })
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'Email already registered' },
+        { status: 400 }
+      )
     }
 
-    // Check if email confirmation is required
-    if (data.user && !data.user.confirmed_at) {
-      return NextResponse.json({
-        message: 'Please check your email to confirm your account',
-        requiresEmailVerification: true,
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12)
+
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex')
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name: name || null,
+        emailVerified: null, // User needs to verify email
+      },
+    })
+
+    // Create verification token in database
+    await prisma.verificationToken.create({
+      data: {
+        identifier: email,
+        token: verificationToken,
+        expires: verificationExpires,
+      },
+    })
+
+    // Send verification email
+    const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const verificationUrl = `${origin}/api/auth/verify-email?token=${verificationToken}`
+
+    try {
+      await sendVerificationEmail({
+        email,
+        name: name || null,
+        verificationUrl,
       })
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError)
+      // Don't fail the signup if email fails to send
     }
 
     return NextResponse.json({
-      message: 'Account created successfully',
-      user: data.user,
+      success: true,
+      userId: user.id,
+      message: 'Account created successfully. Please check your email to verify your account.',
+      requiresEmailVerification: true,
     })
   } catch (error) {
     console.error('Signup error:', error)
     return NextResponse.json(
-      { error: 'An error occurred during signup' },
+      { error: 'Failed to create account' },
       { status: 500 }
     )
   }

@@ -1,38 +1,18 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireAuth } from '@/lib/auth'
 import { prisma } from '@/lib/db/prisma'
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+    const user = await requireAuth()
 
     const { searchParams } = new URL(request.url)
     const calculatorType = searchParams.get('calculatorType')
     const limitParam = searchParams.get('limit')
     const limit = limitParam ? parseInt(limitParam, 10) : undefined
 
-    // Get the user from database
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseId: user.id },
-    })
-
-    if (!dbUser) {
-      return NextResponse.json(
-        { error: 'User not found in database' },
-        { status: 404 }
-      )
-    }
-
     // Only allow lifetime subscribers to view history
-    if (!dbUser.hasLifetimeAccess) {
+    if (!user.hasLifetimeAccess) {
       return NextResponse.json(
         { error: 'This feature is only available for lifetime subscribers' },
         { status: 403 }
@@ -42,7 +22,7 @@ export async function GET(request: Request) {
     // Fetch calculations with optional filter by calculator type and limit
     const calculations = await prisma.calculation.findMany({
       where: {
-        userId: dbUser.id,
+        userId: user.id,
         ...(calculatorType && { calculatorType }),
       },
       orderBy: {

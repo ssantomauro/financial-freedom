@@ -1,46 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { MessageSquare, X } from 'lucide-react'
 import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
+import { useSession } from 'next-auth/react'
 
 export function AuthenticatedFeedbackButton() {
   const { trackEvent } = usePostHog()
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: session, status } = useSession()
   const [isOpen, setIsOpen] = useState(false)
   const [feedback, setFeedback] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const supabase = createClient()
 
-  // Get authenticated user
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        setUser(user)
-      } catch (error) {
-        console.error('Error getting user:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    getUser()
-
-    // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      setIsLoading(false)
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [supabase])
+  const isLoading = status === 'loading'
+  const user = session?.user
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -70,9 +44,9 @@ console.log('response', response);
       // Track in PostHog for analytics
       trackEvent(AnalyticsEvents.FEEDBACK_SUBMITTED, {
         feedback_length: feedback.length,
-        email: user.email || 'anonymous',
-        user_id: user.id,
-        user_name: user.user_metadata?.name || user.email,
+        email: user?.email || 'anonymous',
+        user_id: user?.id,
+        user_name: user?.name || user?.email,
         page: window.location.pathname,
       })
 
@@ -148,13 +122,13 @@ console.log('response', response);
                 <p className="text-xs text-blue-600 font-medium mb-1">Submitting as:</p>
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
-                    {user.email?.charAt(0).toUpperCase()}
+                    {user?.email?.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">
-                      {user.user_metadata?.name || user.email}
+                      {user?.name || user?.email}
                     </p>
-                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                   </div>
                 </div>
               </div>
@@ -178,7 +152,7 @@ console.log('response', response);
 
               {/* Info text */}
               <p className="text-xs text-gray-500">
-                Your feedback will be sent to our team via email. We'll respond to {user.email} if needed.
+                Your feedback will be sent to our team via email. We'll respond to {user?.email} if needed.
               </p>
 
               {/* Buttons */}

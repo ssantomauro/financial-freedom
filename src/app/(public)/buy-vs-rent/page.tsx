@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { Home, TrendingUp, Calculator, DollarSign, CheckCircle, ArrowRight, Users, Star, Zap } from 'lucide-react'
+import { HomeNavigation } from '@/components/layout/HomeNavigation'
+import { PublicFooter } from '@/components/layout/PublicFooter'
 
 export const metadata = {
   title: 'Buy vs Rent Calculator - Make the Right Financial Decision',
@@ -12,33 +14,11 @@ export const metadata = {
   },
 }
 
-export default function BuyVsRentLandingPage() {
+export default async function BuyVsRentLandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">Financial Freedom</span>
-            </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/login" className="text-gray-600 hover:text-gray-900 font-medium">
-                Sign In
-              </Link>
-              <Link
-                href="/signup"
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
-              >
-                Get Started
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <HomeNavigation />
 
       {/* Hero Section */}
       <section className="py-20 px-4">
@@ -343,15 +323,9 @@ export default function BuyVsRentLandingPage() {
                 Get Lifetime Access - $4.90
               </Link>
               <p className="text-center text-blue-100 text-sm mt-4">
-                ⚡ Only 43 spots left at this price!
+                ⚡ Only 87 spots left at this price!
               </p>
             </div>
-          </div>
-
-          <div className="text-center mt-12">
-            <p className="text-gray-600">
-              🔒 Secure payment • 💯 30-day money-back guarantee
-            </p>
           </div>
         </div>
       </section>
@@ -367,19 +341,19 @@ export default function BuyVsRentLandingPage() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                name: 'Sarah Johnson',
+                name: 'Sarah J.',
                 role: 'First-time Home Buyer',
                 content: 'This calculator saved me from making a $100k mistake. The detailed breakdown showed me that renting and investing made more sense for my situation.',
                 rating: 5,
               },
               {
-                name: 'Michael Chen',
+                name: 'Michael C',
                 role: 'Real Estate Investor',
                 content: 'Finally, a calculator that includes ALL the costs. Property taxes, maintenance, opportunity cost - everything. Worth every penny.',
                 rating: 5,
               },
               {
-                name: 'Emily Rodriguez',
+                name: 'Sebastian C.',
                 role: 'Financial Advisor',
                 content: "I recommend this to all my clients. It's professional-grade analysis at a fraction of the cost of a consultation.",
                 rating: 5,
@@ -464,36 +438,13 @@ export default function BuyVsRentLandingPage() {
             </Link>
           </div>
           <p className="text-blue-100 mt-6">
-            ⚡ Limited time offer • 🔒 Secure payment • 💯 30-day guarantee
+            ⚡ Limited time offer • 🔒 Secure payment
           </p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-white">Financial Freedom</span>
-          </div>
-          <div className="flex flex-wrap justify-center gap-6 mb-6">
-            <Link href="/privacy-policy" className="hover:text-white transition">
-              Privacy Policy
-            </Link>
-            <Link href="/terms-of-service" className="hover:text-white transition">
-              Terms of Service
-            </Link>
-            <Link href="/contact" className="hover:text-white transition">
-              Contact
-            </Link>
-          </div>
-          <p className="text-sm">
-            © 2025 Financial Freedom. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   )
 }

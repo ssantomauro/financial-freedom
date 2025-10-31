@@ -149,7 +149,7 @@ export function PaywallModal({ isOpen, onClose, calculatorName }: PaywallModalPr
 
           {/* Trust badges */}
           <div className="mt-4 text-center text-xs text-gray-500">
-            <p>🔒 Secure payment • 💯 30-day money-back guarantee</p>
+            <p>🔒 Secure payment</p>
           </div>
         </div>
       </div>

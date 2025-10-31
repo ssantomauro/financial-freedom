@@ -118,21 +118,21 @@ export default async function BuyVsRentLandingPage() {
             <div className="flex items-center gap-3">
               <Users className="w-8 h-8 text-blue-600" />
               <div>
-                <div className="text-3xl font-bold text-gray-900">500+</div>
+                <div className="text-3xl font-bold text-gray-900">100+</div>
                 <div className="text-gray-600">Happy Users</div>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Calculator className="w-8 h-8 text-blue-600" />
               <div>
-                <div className="text-3xl font-bold text-gray-900">2,000+</div>
+                <div className="text-3xl font-bold text-gray-900">1,000+</div>
                 <div className="text-gray-600">Calculations Made</div>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Star className="w-8 h-8 text-yellow-500" />
               <div>
-                <div className="text-3xl font-bold text-gray-900">4.9/5</div>
+                <div className="text-3xl font-bold text-gray-900">4.8/5</div>
                 <div className="text-gray-600">User Rating</div>
               </div>
             </div>
@@ -141,70 +141,70 @@ export default async function BuyVsRentLandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need to Make the Right Decision
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our calculator considers all the hidden costs and factors that other calculators miss
-            </p>
-          </div>
+      {/*<section className="py-20 px-4">*/}
+      {/*  <div className="max-w-7xl mx-auto">*/}
+      {/*    <div className="text-center mb-16">*/}
+      {/*      <h2 className="text-4xl font-bold text-gray-900 mb-4">*/}
+      {/*        Everything You Need to Make the Right Decision*/}
+      {/*      </h2>*/}
+      {/*      <p className="text-xl text-gray-600 max-w-3xl mx-auto">*/}
+      {/*        Our calculator considers all the hidden costs and factors that other calculators miss*/}
+      {/*      </p>*/}
+      {/*    </div>*/}
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Calculator className="w-8 h-8" />,
-                title: 'Comprehensive Analysis',
-                description: 'Includes property taxes, HOA fees, maintenance, insurance, PMI, closing costs, and more.',
-                color: 'blue',
-              },
-              {
-                icon: <TrendingUp className="w-8 h-8" />,
-                title: 'Investment Comparison',
-                description: 'See how investing your down payment and savings would grow vs building home equity.',
-                color: 'green',
-              },
-              {
-                icon: <Home className="w-8 h-8" />,
-                title: 'Real Market Data',
-                description: 'Accounts for home appreciation, rent increases, and realistic inflation rates.',
-                color: 'purple',
-              },
-              {
-                icon: <DollarSign className="w-8 h-8" />,
-                title: 'Net Worth Impact',
-                description: 'See your projected net worth under both scenarios over your chosen timeframe.',
-                color: 'orange',
-              },
-              {
-                icon: <CheckCircle className="w-8 h-8" />,
-                title: 'Save & Review',
-                description: 'Save unlimited calculations and review your history anytime.',
-                color: 'green',
-              },
-              {
-                icon: <Zap className="w-8 h-8" />,
-                title: 'Instant Results',
-                description: 'Get comprehensive analysis in seconds with beautiful, easy-to-understand results.',
-                color: 'blue',
-              },
-            ].map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-2xl p-8 border border-gray-200 hover:border-blue-300 hover:shadow-lg transition"
-              >
-                <div className={`w-16 h-16 bg-${feature.color}-100 rounded-xl flex items-center justify-center text-${feature.color}-600 mb-4`}>
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/*    <div className="grid md:grid-cols-3 gap-8">*/}
+      {/*      {[*/}
+      {/*        {*/}
+      {/*          icon: <Calculator className="w-8 h-8" />,*/}
+      {/*          title: 'Comprehensive Analysis',*/}
+      {/*          description: 'Includes property taxes, HOA fees, maintenance, insurance, PMI, closing costs, and more.',*/}
+      {/*          color: 'blue',*/}
+      {/*        },*/}
+      {/*        {*/}
+      {/*          icon: <TrendingUp className="w-8 h-8" />,*/}
+      {/*          title: 'Investment Comparison',*/}
+      {/*          description: 'See how investing your down payment and savings would grow vs building home equity.',*/}
+      {/*          color: 'green',*/}
+      {/*        },*/}
+      {/*        {*/}
+      {/*          icon: <Home className="w-8 h-8" />,*/}
+      {/*          title: 'Real Market Data',*/}
+      {/*          description: 'Accounts for home appreciation, rent increases, and realistic inflation rates.',*/}
+      {/*          color: 'purple',*/}
+      {/*        },*/}
+      {/*        {*/}
+      {/*          icon: <DollarSign className="w-8 h-8" />,*/}
+      {/*          title: 'Net Worth Impact',*/}
+      {/*          description: 'See your projected net worth under both scenarios over your chosen timeframe.',*/}
+      {/*          color: 'orange',*/}
+      {/*        },*/}
+      {/*        {*/}
+      {/*          icon: <CheckCircle className="w-8 h-8" />,*/}
+      {/*          title: 'Save & Review',*/}
+      {/*          description: 'Save unlimited calculations and review your history anytime.',*/}
+      {/*          color: 'green',*/}
+      {/*        },*/}
+      {/*        {*/}
+      {/*          icon: <Zap className="w-8 h-8" />,*/}
+      {/*          title: 'Instant Results',*/}
+      {/*          description: 'Get comprehensive analysis in seconds with beautiful, easy-to-understand results.',*/}
+      {/*          color: 'blue',*/}
+      {/*        },*/}
+      {/*      ].map((feature, index) => (*/}
+      {/*        <div*/}
+      {/*          key={index}*/}
+      {/*          className="bg-white rounded-2xl p-8 border border-gray-200 hover:border-blue-300 hover:shadow-lg transition"*/}
+      {/*        >*/}
+      {/*          <div className={`w-16 h-16 bg-${feature.color}-100 rounded-xl flex items-center justify-center text-${feature.color}-600 mb-4`}>*/}
+      {/*            {feature.icon}*/}
+      {/*          </div>*/}
+      {/*          <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>*/}
+      {/*          <p className="text-gray-600">{feature.description}</p>*/}
+      {/*        </div>*/}
+      {/*      ))}*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*</section>*/}
 
       {/* How It Works */}
       <section className="py-20 px-4 bg-gradient-to-br from-blue-50 to-purple-50">
@@ -323,7 +323,7 @@ export default async function BuyVsRentLandingPage() {
                 Get Lifetime Access - $4.90
               </Link>
               <p className="text-center text-blue-100 text-sm mt-4">
-                ⚡ Only 87 spots left at this price!
+                ⚡ Only 21 spots left at this price!
               </p>
             </div>
           </div>
@@ -347,15 +347,15 @@ export default async function BuyVsRentLandingPage() {
                 rating: 5,
               },
               {
-                name: 'Michael C',
-                role: 'Real Estate Investor',
-                content: 'Finally, a calculator that includes ALL the costs. Property taxes, maintenance, opportunity cost - everything. Worth every penny.',
+                name: 'Michael C.',
+                role: 'Third-time Home Buyer',
+                content: 'I was going to buy my third estate and I used Financial Freedom to calculate the exact monthly cost. So far, it has been very accurate!',
                 rating: 5,
               },
               {
-                name: 'Sebastian C.',
+                name: 'Sebastian T.',
                 role: 'Financial Advisor',
-                content: "I recommend this to all my clients. It's professional-grade analysis at a fraction of the cost of a consultation.",
+                content: 'I personally tried the Buy Vs Rent Calculator, and it helped me to analyze the numbers from a different perspective. 100% suggested.',
                 rating: 5,
               },
             ].map((testimonial, index) => (
@@ -387,7 +387,7 @@ export default async function BuyVsRentLandingPage() {
             {[
               {
                 q: 'What makes this calculator different?',
-                a: 'Unlike simple calculators, we include ALL costs: property taxes, HOA fees, maintenance, insurance, PMI, closing costs, opportunity costs, and more. We also project your net worth under both scenarios.',
+                a: "Unlike simple calculators, we include ALL costs: property taxes, HOA fees, maintenance, insurance, PMI, closing costs, opportunity costs, and more. We don't just calculate the total costs, we also project your net worth under both scenarios.",
               },
               {
                 q: 'Is the $4.90 price really for lifetime access?',
@@ -398,16 +398,12 @@ export default async function BuyVsRentLandingPage() {
                 a: 'Absolutely! You get 3 free calculations with full access to all features. No credit card required.',
               },
               {
-                q: 'What if I change my mind?',
-                a: 'We offer a 30-day money-back guarantee. If you\'re not satisfied, we\'ll refund you immediately, no questions asked.',
-              },
-              {
                 q: 'How accurate are the calculations?',
-                a: 'Our calculator uses industry-standard formulas and accounts for real-world factors like appreciation, inflation, and opportunity costs. However, it\'s a tool to help inform your decision - always consult with a financial advisor for personalized advice.',
+                a: 'Our calculator uses industry-standard formulas and accounts for real-world factors like appreciation, inflation, and opportunity costs. However, it\'s a tool to help inform your decision - always consult with a financial advisor for personalized advice, if you have any doubt.',
               },
               {
                 q: 'Can I save and compare multiple scenarios?',
-                a: 'Yes! With lifetime access, you can save unlimited calculations and compare different scenarios (different homes, down payments, locations, etc.)',
+                a: 'Yes! With lifetime access, you can save unlimited calculations. We are still working on giving the chance to compare different scenarios as well!',
               },
             ].map((faq, index) => (
               <div key={index} className="bg-white rounded-xl p-6 border border-gray-200">
@@ -426,7 +422,7 @@ export default async function BuyVsRentLandingPage() {
             Ready to Make the Right Decision?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Join hundreds of smart home buyers and renters who made informed decisions with our calculator
+            Join other smart home buyers and renters who made informed decisions with our calculator
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

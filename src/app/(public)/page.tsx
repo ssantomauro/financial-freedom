@@ -210,15 +210,12 @@ export default async function HomePage() {
                 >
                   Get Lifetime Access - $4.90
                 </Link>
-                <p className="text-center text-blue-100 text-sm mt-4">
-                  ⚡ Only 43 spots left at this price!
-                </p>
               </div>
             </div>
 
             <div className="text-center mt-12">
               <p className="text-gray-600">
-                🔒 Secure payment • 💯 30-day money-back guarantee
+                ⚡ Limited time offer • 🔒 Secure payment
               </p>
             </div>
           </div>

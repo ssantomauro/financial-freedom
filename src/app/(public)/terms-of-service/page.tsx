@@ -31,13 +31,6 @@ export default function TermsOfServicePage() {
             </div>
           </div>
 
-          {/* Disclaimer */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
-            <p className="text-sm text-yellow-800">
-              <strong>Important Notice:</strong> This is a template terms of service. You must have this reviewed and customized by a qualified attorney before using it. This template does not constitute legal advice.
-            </p>
-          </div>
-
           {/* Content */}
           <div className="prose prose-gray max-w-none">
             <section className="mb-8">
@@ -105,11 +98,6 @@ export default function TermsOfServicePage() {
                 <li>Confirm that the payment information is accurate</li>
                 <li>Agree to pay all applicable fees and taxes</li>
               </ul>
-
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Refund Policy</h3>
-              <p className="text-gray-700">
-                We offer a 14-day money-back guarantee. If you are not satisfied with your purchase, contact us within 30 days for a full refund. After 30 days, all sales are final.
-              </p>
             </section>
 
             <section className="mb-8">
@@ -175,7 +163,7 @@ export default function TermsOfServicePage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">9. Limitation of Liability</h2>
               <p className="text-gray-700 mb-4">
-                To the fullest extent permitted by law, Financial Freedom and its officers, directors, employees, and agents shall not be liable for:
+                To the fullest extent permitted by law, Financial Freedom and its officers, directors, employees, collaborators, and agents shall not be liable for:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-2">
                 <li>Any indirect, incidental, special, consequential, or punitive damages</li>
@@ -183,9 +171,6 @@ export default function TermsOfServicePage() {
                 <li>Damages resulting from your use or inability to use the Service</li>
                 <li>Any financial losses resulting from decisions made based on our calculators</li>
               </ul>
-              <p className="text-gray-700 mt-4">
-                Our total liability shall not exceed the amount you paid for the Service in the last 12 months, or $100, whichever is less.
-              </p>
             </section>
 
             <section className="mb-8">
@@ -198,10 +183,10 @@ export default function TermsOfServicePage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">11. Governing Law and Disputes</h2>
               <p className="text-gray-700 mb-4">
-                These Terms shall be governed by and construed in accordance with the laws of [YOUR JURISDICTION], without regard to its conflict of law provisions.
+                These Terms shall be governed by and construed in accordance with the laws of California, without regard to its conflict of law provisions.
               </p>
               <p className="text-gray-700">
-                Any disputes arising from these Terms or the Service shall be resolved through [arbitration/courts in YOUR JURISDICTION].
+                Any disputes arising from these Terms or the Service shall be resolved through arbitration/courts in California.
               </p>
             </section>
 
@@ -232,18 +217,10 @@ export default function TermsOfServicePage() {
                 If you have questions about these Terms, please contact us at:
               </p>
               <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-gray-700"><strong>Email:</strong> [YOUR EMAIL ADDRESS]</p>
-                <p className="text-gray-700"><strong>Address:</strong> [YOUR BUSINESS ADDRESS]</p>
+                <p className="text-gray-700"><strong>Email:</strong> support@financialfreedom.tech</p>
               </div>
             </section>
 
-            {/* Legal Disclaimer */}
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 mt-8">
-              <h3 className="text-lg font-semibold text-red-900 mb-2">Legal Disclaimer</h3>
-              <p className="text-sm text-red-800">
-                This terms of service template is provided for informational purposes only and does not constitute legal advice. You must consult with a qualified attorney to ensure these terms comply with all applicable laws and accurately reflect your business practices. Laws vary by jurisdiction and are subject to change. This template should be customized to your specific business needs and reviewed by legal counsel before use.
-              </p>
-            </div>
           </div>
         </div>
       </div>

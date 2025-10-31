@@ -31,13 +31,6 @@ export default function PrivacyPolicyPage() {
             </div>
           </div>
 
-          {/* Disclaimer */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
-            <p className="text-sm text-yellow-800">
-              <strong>Important Notice:</strong> This is a template privacy policy. You must have this reviewed and customized by a qualified attorney before using it. This template does not constitute legal advice.
-            </p>
-          </div>
-
           {/* Content */}
           <div className="prose prose-gray max-w-none">
             <section className="mb-8">
@@ -177,18 +170,10 @@ export default function PrivacyPolicyPage() {
                 If you have questions or concerns about this privacy policy or our data practices, please contact us at:
               </p>
               <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-gray-700"><strong>Email:</strong> [YOUR EMAIL ADDRESS]</p>
-                <p className="text-gray-700"><strong>Address:</strong> [YOUR BUSINESS ADDRESS]</p>
+                <p className="text-gray-700"><strong>Email:</strong> support@financialfreedom.tech</p>
+                {/*<p className="text-gray-700"><strong>Address:</strong> 7777 Westside Dr, San Diego CA, 92108</p>*/}
               </div>
             </section>
-
-            {/* Legal Disclaimer */}
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 mt-8">
-              <h3 className="text-lg font-semibold text-red-900 mb-2">Legal Disclaimer</h3>
-              <p className="text-sm text-red-800">
-                This privacy policy template is provided for informational purposes only and does not constitute legal advice. You must consult with a qualified attorney to ensure this policy complies with all applicable laws and accurately reflects your business practices. Laws vary by jurisdiction and are subject to change.
-              </p>
-            </div>
           </div>
         </div>
       </div>

@@ -172,7 +172,7 @@ export default function SignupPage() {
                 </AuthButton>
 
                 <p className="text-xs text-gray-500 text-center mt-4">
-                  By signing up, you agree to our Terms of Service and Privacy Policy
+                  By signing up, you agree to our <a href="/terms-of-service" target="_blank">Terms of Service</a> and <a href="/privacy-policy" target="_blank">Privacy Policy</a>.
                 </p>
               </form>
             </>

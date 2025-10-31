@@ -33,21 +33,30 @@ export default function AboutPage() {
 
           {/* Story Section */}
           <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">My Story</h2>
-            <div className="space-y-4 text-gray-700 leading-relaxed">
+            {/*<h2 className="text-3xl font-bold text-gray-900 mb-6">My Story</h2>*/}
+            <div className="italic space-y-4 text-gray-700 leading-relaxed">
               <p>
-                Hi! I'm the creator of Financial Freedom, and I built this platform to solve a problem I faced myself:
+                Hi! I am Stefano, the creator of Financial Freedom.
+              </p>
+              <p>
+                I am a Software Engineer, and I built this platform to solve a problem I faced myself:
                 making important financial decisions without complicated spreadsheets or expensive financial advisors.
               </p>
               <p>
-                When I was deciding whether to buy or rent my first home, I spent hours building complex Excel models
-                to compare the true costs. I realized that these calculations shouldn't be this difficult—everyone
+                When I was deciding whether to buy or rent my first home, I spent hours looking for calculators that
+                could help me make decisions. I always try to calculate as much as possible 😅, and every calculator online
+                was missing something I needed. I realized that these calculations shouldn't be this difficult—everyone
                 deserves access to clear, simple tools that help them make confident financial decisions.
               </p>
               <p>
                 That's why I created Financial Freedom: a collection of straightforward calculators that break down
                 complex financial scenarios into understandable results. No jargon, no hidden fees, just honest tools
                 to help you plan your financial future.
+              </p>
+              <p>
+                I do hope you will enjoy the tools that Financial Freedom offers. If you find something unclear,
+                just give me a shout, and I'll do my best to improve it. And, if you want to just drop me an email
+                (look at the Contact section) to say that the tools helped you, I will be more than happy to hear from you!
               </p>
             </div>
           </div>
@@ -61,7 +70,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">Mission</h3>
               <p className="text-gray-600 text-sm">
-                To democratize financial planning by providing free, easy-to-use calculators that help people
+                To simplify financial planning by providing easy-to-use calculators that help people
                 make informed decisions about their money.
               </p>
             </div>

@@ -1,42 +1,19 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
-import { ChevronDown, LogOut, User as UserIcon } from 'lucide-react'
+import { useSession, signOut } from 'next-auth/react'
+import { ChevronDown, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export function UserDropdown() {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: session, status } = useSession()
   const [isOpen, setIsOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
-  const supabase = createClient()
 
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      setUser(user)
-      setIsLoading(false)
-    }
-
-    getUser()
-
-    // Subscribe to auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [supabase])
+  const isLoading = status === 'loading'
+  const user = session?.user
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -54,16 +31,7 @@ export function UserDropdown() {
     setIsLoggingOut(true)
 
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-      })
-
-      if (response.ok) {
-        router.push('/login')
-        router.refresh()
-      } else {
-        console.error('Logout failed')
-      }
+      await signOut({ callbackUrl: '/' })
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
@@ -85,7 +53,7 @@ export function UserDropdown() {
     return null
   }
 
-  const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email
+  const displayName = user?.name || user?.email
   const initials = displayName?.charAt(0).toUpperCase() || 'U'
 
   return (
@@ -98,7 +66,7 @@ export function UserDropdown() {
           {initials}
         </div>
         <span className="text-sm font-medium text-gray-700 hidden sm:block">
-          {user.user_metadata?.full_name || user.user_metadata?.name || 'Account'}
+          {user?.name || 'Account'}
         </span>
         <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -108,9 +76,9 @@ export function UserDropdown() {
           {/* User Info */}
           <div className="px-4 py-3 border-b border-gray-100">
             <p className="text-sm font-medium text-gray-900 truncate">
-              {user.user_metadata?.full_name || user.user_metadata?.name || 'User'}
+              {user?.name || 'User'}
             </p>
-            <p className="text-xs text-gray-500 truncate">{user.email}</p>
+            <p className="text-xs text-gray-500 truncate">{user?.email}</p>
           </div>
 
           {/* Menu Items */}

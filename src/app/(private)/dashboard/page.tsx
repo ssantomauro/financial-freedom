@@ -16,21 +16,15 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  // Get user's lifetime access status
-  const dbUser = await prisma.user.findUnique({
-    where: { supabaseId: user.id },
-    select: { hasLifetimeAccess: true },
-  })
-
-  const hasLifetimeAccess = dbUser?.hasLifetimeAccess || false
+  const hasLifetimeAccess = user.hasLifetimeAccess || false
 
   return (
     <div className="py-12 px-4">
       {/* Identify user with PostHog */}
       <PostHogIdentifier
         userId={user.id}
-        email={user.email}
-        name={user.user_metadata?.full_name || user.user_metadata?.name}
+        email={user.email || ''}
+        name={user.name}
         hasLifetimeAccess={hasLifetimeAccess}
       />
 
@@ -41,7 +35,7 @@ export default async function DashboardPage() {
         {/* Welcome Section */}
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Welcome back{user.user_metadata?.full_name || user.user_metadata?.name ? `, ${user.user_metadata?.full_name || user.user_metadata?.name}` : ''}!
+            Welcome back{user.name ? `, ${user.name}` : ''}!
           </h1>
           <p className="text-xl text-gray-600">
             Choose a calculator to start making smarter financial decisions

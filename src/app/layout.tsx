@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'  // ← Make sure this line is here!
 import { PostHogProvider } from '@/lib/posthog/provider'
+import { SessionProvider } from '@/components/providers/SessionProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,9 +22,11 @@ export default function RootLayout({
   return (
       <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <PostHogProvider>
-          {children}
-        </PostHogProvider>
+        <SessionProvider>
+          <PostHogProvider>
+            {children}
+          </PostHogProvider>
+        </SessionProvider>
       </body>
       </html>
   )

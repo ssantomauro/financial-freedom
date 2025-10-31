@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
-import { syncUserToDatabase } from '@/lib/auth/syncUser'
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/db/prisma'
+import bcrypt from 'bcryptjs'
 
 export async function POST(request: Request) {
   try {
@@ -13,55 +13,48 @@ export async function POST(request: Request) {
       )
     }
 
-    const supabase = await createClient()
-    const origin = request.headers.get('origin')
-
-    // Sign up the user with Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/api/auth/callback`,
-        data: {
-          name: name || null,
-          full_name: name || null, // Supabase uses this for display name
-        },
-      },
-    })
-
-    if (error) {
+    if (password.length < 6) {
       return NextResponse.json(
-        { error: error.message },
+        { error: 'Password must be at least 6 characters long' },
         { status: 400 }
       )
     }
 
-    // Sync user to database
-    if (data.user) {
-      try {
-        await syncUserToDatabase(data.user)
-      } catch (syncError) {
-        console.error('Failed to sync user to database:', syncError)
-        // Don't fail the request if sync fails
-      }
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    })
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'Email already registered' },
+        { status: 400 }
+      )
     }
 
-    // Check if email confirmation is required
-    if (data.user && !data.user.confirmed_at) {
-      return NextResponse.json({
-        message: 'Please check your email to confirm your account',
-        requiresEmailVerification: true,
-      })
-    }
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12)
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name: name || null,
+        emailVerified: null, // User needs to verify email
+      },
+    })
 
     return NextResponse.json({
+      success: true,
+      userId: user.id,
       message: 'Account created successfully',
-      user: data.user,
+      requiresEmailVerification: false, // We'll implement email verification later if needed
     })
   } catch (error) {
     console.error('Signup error:', error)
     return NextResponse.json(
-      { error: 'An error occurred during signup' },
+      { error: 'Failed to create account' },
       { status: 500 }
     )
   }

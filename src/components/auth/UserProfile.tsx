@@ -1,37 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
+import { useSession } from 'next-auth/react'
 import { LogoutButton } from './LogoutButton'
 
 export function UserProfile() {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClient()
-
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      setUser(user)
-      setIsLoading(false)
-    }
-
-    getUser()
-
-    // Subscribe to auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [supabase])
+  const { data: session, status } = useSession()
+  const isLoading = status === 'loading'
+  const user = session?.user
 
   if (isLoading) {
     return (
@@ -50,10 +25,10 @@ export function UserProfile() {
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
         <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
-          {user.email?.charAt(0).toUpperCase()}
+          {user?.email?.charAt(0).toUpperCase()}
         </div>
         <span className="text-sm font-medium text-gray-700">
-          {user.user_metadata?.name || user.email}
+          {user?.name || user?.email}
         </span>
       </div>
       <LogoutButton className="text-sm text-gray-600 hover:text-gray-900 transition-colors">

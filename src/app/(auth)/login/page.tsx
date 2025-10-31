@@ -3,6 +3,7 @@
 import { useState, FormEvent, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { AuthButton } from '@/components/auth/AuthButton'
 import { AuthInput } from '@/components/auth/AuthInput'
 import { OAuthButtons } from '@/components/auth/OAuthButtons'
@@ -31,30 +32,18 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
       })
 
-      const data = await response.json()
-
-      if (response.ok) {
+      if (result?.ok) {
         // Track successful login
         trackEvent(AnalyticsEvents.LOGIN_COMPLETED, {
           email,
           login_method: 'email_password'
         })
-
-        // Identify user if we have their ID
-        if (data.userId) {
-          identifyUser(data.userId, {
-            email,
-            last_login: new Date().toISOString()
-          })
-        }
 
         setSuccess('Login successful! Redirecting...')
         setTimeout(() => {
@@ -62,7 +51,7 @@ export default function LoginPage() {
           router.refresh()
         }, 1000)
       } else {
-        setError(data.error || 'Login failed')
+        setError(result?.error || 'Invalid email or password')
       }
     } catch (error) {
       console.error('Login error:', error)

@@ -1,18 +1,10 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireAuth } from '@/lib/auth'
 import { sendFeedbackEmail } from '@/lib/email/mailer'
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+    const user = await requireAuth()
 
     const body = await request.json()
     const { feedback, page } = body
@@ -44,7 +36,7 @@ export async function POST(request: Request) {
     // Send email
     await sendFeedbackEmail({
       userEmail: user.email || 'anonymous@example.com',
-      userName: user.user_metadata?.name || user.email || 'Anonymous User',
+      userName: user.name || user.email || 'Anonymous User',
       userId: user.id,
       feedback: feedback.trim(),
       page: page || '/',

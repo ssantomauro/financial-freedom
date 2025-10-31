@@ -1,18 +1,10 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireAuth } from '@/lib/auth'
 import { prisma } from '@/lib/db/prisma'
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+    const user = await requireAuth()
 
     const { searchParams } = new URL(request.url)
     const calculatorType = searchParams.get('calculatorType')
@@ -26,7 +18,7 @@ export async function GET(request: Request) {
 
     // Get the user from database
     const dbUser = await prisma.user.findUnique({
-      where: { supabaseId: user.id },
+      where: { id: user.id },
       include: {
         calculations: {
           where: {
@@ -39,25 +31,18 @@ export async function GET(request: Request) {
       },
     })
 
-    if (!dbUser) {
-      return NextResponse.json(
-        { error: 'User not found in database' },
-        { status: 404 }
-      )
-    }
-
     const MAX_FREE_CALCULATIONS = 3
-    const calculationsUsed = dbUser.calculations.length
+    const calculationsUsed = dbUser?.calculations.length || 0
     const remainingCalculations = Math.max(0, MAX_FREE_CALCULATIONS - calculationsUsed)
 
     // Check if user has lifetime access
-    if (dbUser.hasLifetimeAccess) {
+    if (dbUser?.hasLifetimeAccess) {
       return NextResponse.json({
         canUse: true,
         hasLifetimeAccess: true,
         calculationsUsed,
         remainingCalculations: -1, // -1 means unlimited
-        lastCalculation: dbUser.calculations[0] || null,
+        lastCalculation: dbUser?.calculations[0] || null,
       })
     }
 

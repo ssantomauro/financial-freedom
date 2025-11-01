@@ -138,13 +138,17 @@ export const authOptions: NextAuthConfig = {
       }
       return true
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
+      // On sign in, set the user ID
       if (user) {
         token.id = user.id
+      }
 
-        // Fetch user's subscription status
+      // Always fetch latest subscription status from database
+      // This ensures session.update() gets the latest data
+      if (token.id) {
         const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
+          where: { id: token.id as string },
           select: {
             hasLifetimeAccess: true,
             subscriptionDate: true,
@@ -154,6 +158,7 @@ export const authOptions: NextAuthConfig = {
         token.hasLifetimeAccess = dbUser?.hasLifetimeAccess || false
         token.subscriptionDate = dbUser?.subscriptionDate || null
       }
+
       return token
     },
     async session({ session, token }) {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { CheckCircle, Sparkles, ArrowRight } from 'lucide-react'
 import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
@@ -10,8 +11,8 @@ export function SuccessPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const sessionId = searchParams.get('session_id')
-  const [countdown, setCountdown] = useState(10)
   const { trackEvent } = usePostHog()
+  const { update } = useSession()
 
   useEffect(() => {
     // Track payment completion
@@ -20,23 +21,10 @@ export function SuccessPageContent() {
       amount: 9.90,
       currency: 'USD'
     })
-  }, [sessionId, trackEvent])
 
-  useEffect(() => {
-    // Redirect to dashboard after 10 seconds
-    const timer = setInterval(() => {
-      setCountdown((prev) => prev - 1)
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [])
-
-  useEffect(() => {
-    // Navigate when countdown reaches 0
-    if (countdown === 0) {
-      router.push('/dashboard')
-    }
-  }, [countdown, router])
+    // Force session refresh to get updated hasLifetimeAccess
+    update()
+  }, [sessionId, trackEvent, update])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center px-4 py-12">
@@ -110,13 +98,6 @@ export function SuccessPageContent() {
             >
               View Calculation History
             </Link>
-          </div>
-
-          {/* Auto-redirect notice */}
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <p>
-              Auto-redirecting to dashboard in {countdown} second{countdown !== 1 ? 's' : ''}...
-            </p>
           </div>
         </div>
 

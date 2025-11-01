@@ -55,6 +55,7 @@ export function UserDropdown() {
 
   const displayName = user?.name || user?.email
   const initials = displayName?.charAt(0).toUpperCase() || 'U'
+  const hasAvatar = user?.image
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -62,9 +63,17 @@ export function UserDropdown() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
       >
-        <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
-          {initials}
-        </div>
+        {hasAvatar ? (
+          <img
+            src={user.image!}
+            alt={displayName || 'User avatar'}
+            className="h-8 w-8 rounded-full object-cover"
+          />
+        ) : (
+          <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+            {initials}
+          </div>
+        )}
         <span className="text-sm font-medium text-gray-700 hidden sm:block">
           {user?.name || 'Account'}
         </span>
@@ -75,10 +84,25 @@ export function UserDropdown() {
         <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
           {/* User Info */}
           <div className="px-4 py-3 border-b border-gray-100">
-            <p className="text-sm font-medium text-gray-900 truncate">
-              {user?.name || 'User'}
-            </p>
-            <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+            <div className="flex items-center gap-3">
+              {hasAvatar ? (
+                <img
+                  src={user.image!}
+                  alt={displayName || 'User avatar'}
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+              ) : (
+                <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
+                  {initials}
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {user?.name || 'User'}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+              </div>
+            </div>
           </div>
 
           {/* Menu Items */}

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireAuth } from '@/lib/auth'
 import { prisma } from '@/lib/db/prisma'
 
 export async function GET(
@@ -7,21 +7,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
+    const user = await requireAuth()
     const { id } = await params
 
     // Get the user from database
     const dbUser = await prisma.user.findUnique({
-      where: { supabaseId: user.id },
+      where: { id: user.id },
     })
 
     if (!dbUser) {

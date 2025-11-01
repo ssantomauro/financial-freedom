@@ -14,7 +14,7 @@ export default async function HistoryPage() {
 
   // Get user's lifetime access status
   const dbUser = await prisma.user.findUnique({
-    where: { supabaseId: user.id },
+    where: { id: user.id },
     select: { hasLifetimeAccess: true },
   })
 

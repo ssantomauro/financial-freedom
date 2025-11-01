@@ -54,7 +54,7 @@ export async function GET(request: Request) {
       hasLifetimeAccess: false,
       calculationsUsed,
       remainingCalculations,
-      lastCalculation: dbUser.calculations[0] || null,
+      lastCalculation: dbUser?.calculations[0] || null,
     })
   } catch (error) {
     console.error('Check usage status error:', error)

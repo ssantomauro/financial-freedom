@@ -42,7 +42,6 @@
 - `src/app/(private)/layout.tsx` - Added header and footer
 - `src/lib/supabase/middleware.ts` - Updated redirect logic
 - `src/app/api/auth/signup/route.ts` - Added `full_name` for display
-- `src/lib/auth/syncUser.ts` - Check for `full_name` in metadata
 
 ## 🎨 Design Features
 

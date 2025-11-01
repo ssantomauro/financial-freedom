@@ -24,7 +24,7 @@ export default async function DashboardPage() {
       <PostHogIdentifier
         userId={user.id}
         email={user.email || ''}
-        name={user.name}
+        name={user.name || ''}
         hasLifetimeAccess={hasLifetimeAccess}
       />
 

@@ -273,3 +273,33 @@ ${process.env.NEXT_PUBLIC_APP_URL}
 
   return await transporter.sendMail(mailOptions)
 }
+
+export interface NewUserNotificationData {
+  email: string
+  name?: string | null
+  signupMethod: 'Email/Password' | 'Google OAuth'
+}
+
+export async function sendNewUserNotification(data: NewUserNotificationData) {
+  const { email, name, signupMethod } = data
+  const timestamp = new Date().toUTCString()
+
+  const emailText = `
+New User Signup - Financial Freedom
+
+New user registered:
+- Email: ${email}
+- Name: ${name || 'N/A'}
+- Method: ${signupMethod}
+- Time: ${timestamp}
+  `
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: process.env.ADMIN_EMAIL,
+    subject: 'New User Signup - Financial Freedom',
+    text: emailText,
+  }
+
+  return await transporter.sendMail(mailOptions)
+}

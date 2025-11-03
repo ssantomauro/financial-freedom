@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "@/lib/db/prisma"
 import bcrypt from "bcryptjs"
+import { sendNewUserNotification } from "@/lib/email/mailer"
 
 export const authOptions: NextAuthConfig = {
   providers: [
@@ -130,6 +131,18 @@ export const authOptions: NextAuthConfig = {
                 id_token: account.id_token,
               },
             })
+
+            // Send admin notification for new user (non-blocking)
+            try {
+              await sendNewUserNotification({
+                email: user.email!,
+                name: user.name,
+                signupMethod: 'Google OAuth',
+              })
+            } catch (emailError) {
+              console.error('Failed to send admin notification:', emailError)
+              // Don't fail the signup if admin email fails to send
+            }
           }
         } catch (error) {
           console.error("Error in signIn callback:", error)
@@ -138,7 +151,7 @@ export const authOptions: NextAuthConfig = {
       }
       return true
     },
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user }) {
       // On sign in, set the user ID
       if (user) {
         token.id = user.id

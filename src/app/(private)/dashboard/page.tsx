@@ -6,6 +6,7 @@ import { prisma } from '@/lib/db/prisma'
 import { CalculationHistory } from '@/components/dashboard/CalculationHistory'
 import { PostHogIdentifier } from '@/components/analytics/PostHogIdentifier'
 import { DashboardTracker } from '@/components/analytics/DashboardTracker'
+import { SessionRefresher } from '@/components/dashboard/SessionRefresher'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,6 +21,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="py-12 px-4">
+      {/* Auto-refresh session to get latest DB data */}
+      <SessionRefresher />
+
       {/* Identify user with PostHog */}
       <PostHogIdentifier
         userId={user.id}

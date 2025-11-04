@@ -329,9 +329,8 @@ export function BuyVsRentCalculator() {
         {/* Disclaimer */}
         <div className="mb-6 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
           <p className="text-sm text-amber-900">
-            <strong>DISCLAIMER:</strong> This calculator is provided for educational and informational purposes only and
-            does not constitute financial advice. This is just a tool to help you make a decision.
-            You should always consult with a professional before making any financial decisions.
+            <strong>DISCLAIMER:</strong> This calculator is designed to provide general information, not financial advice.
+            Before making any financial decisions, please consult a qualified professional.
           </p>
         </div>
 

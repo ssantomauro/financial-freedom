@@ -6,7 +6,6 @@ import { prisma } from '@/lib/db/prisma'
 import { CalculationHistory } from '@/components/dashboard/CalculationHistory'
 import { PostHogIdentifier } from '@/components/analytics/PostHogIdentifier'
 import { DashboardTracker } from '@/components/analytics/DashboardTracker'
-import { SessionRefresher } from '@/components/dashboard/SessionRefresher'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,57 +19,54 @@ export default async function DashboardPage() {
   const hasLifetimeAccess = user.hasLifetimeAccess || false
 
   return (
-    <div className="py-12 px-4">
-      {/* Auto-refresh session to get latest DB data */}
-      <SessionRefresher />
+      <div className="py-12 px-4">
+        {/* Identify user with PostHog */}
+        <PostHogIdentifier
+            userId={user.id}
+            email={user.email || ''}
+            name={user.name || ''}
+            hasLifetimeAccess={hasLifetimeAccess}
+        />
 
-      {/* Identify user with PostHog */}
-      <PostHogIdentifier
-        userId={user.id}
-        email={user.email || ''}
-        name={user.name || ''}
-        hasLifetimeAccess={hasLifetimeAccess}
-      />
+        {/* Track dashboard view */}
+        <DashboardTracker />
 
-      {/* Track dashboard view */}
-      <DashboardTracker />
-
-      <div className="max-w-7xl mx-auto">
-        {/* Welcome Section */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Welcome back{user.name ? `, ${user.name}` : ''}!
-          </h1>
-          <p className="text-xl text-gray-600">
-            Choose a calculator to start making smarter financial decisions
-          </p>
-        </div>
-
-        {/* Calculation History */}
-        <CalculationHistory hasLifetimeAccess={hasLifetimeAccess} />
-
-        {/* Calculators Grid */}
-        <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">All Calculators</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {calculators.map((calc) => (
-              <CalculatorCard key={calc.id} {...calc} />
-            ))}
+        <div className="max-w-7xl mx-auto">
+          {/* Welcome Section */}
+          <div className="mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              Welcome back{user.name ? `, ${user.name}` : ''}!
+            </h1>
+            <p className="text-xl text-gray-600">
+              Choose a calculator to start making smarter financial decisions
+            </p>
           </div>
-        </section>
+
+          {/* Calculation History */}
+          <CalculationHistory hasLifetimeAccess={hasLifetimeAccess} />
+
+          {/* Calculators Grid */}
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">All Calculators</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {calculators.map((calc) => (
+                  <CalculatorCard key={calc.id} {...calc} />
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
-    </div>
   )
 }
 
 // Calculator Card Component
 function CalculatorCard({
-  icon: Icon,
-  title,
-  description,
-  href,
-  color
-}: {
+                          icon: Icon,
+                          title,
+                          description,
+                          href,
+                          color
+                        }: {
   icon: any
   title: string
   description: string
@@ -78,24 +74,24 @@ function CalculatorCard({
   color: string
 }) {
   return (
-    <Link
-      href={href}
-      className="group block p-8 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:shadow-xl transition-all"
-    >
-      <div className={`w-14 h-14 ${color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-        <Icon className="w-7 h-7 text-white" />
-      </div>
-      <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition">
-        {title}
-      </h3>
-      <p className="text-gray-600 mb-4">
-        {description}
-      </p>
-      <div className="flex items-center text-blue-600 font-semibold group-hover:gap-2 transition-all">
-        Open Calculator
-        <ArrowRight className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" />
-      </div>
-    </Link>
+      <Link
+          href={href}
+          className="group block p-8 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:shadow-xl transition-all"
+      >
+        <div className={`w-14 h-14 ${color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+          <Icon className="w-7 h-7 text-white" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition">
+          {title}
+        </h3>
+        <p className="text-gray-600 mb-4">
+          {description}
+        </p>
+        <div className="flex items-center text-blue-600 font-semibold group-hover:gap-2 transition-all">
+          Open Calculator
+          <ArrowRight className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" />
+        </div>
+      </Link>
   )
 }
 

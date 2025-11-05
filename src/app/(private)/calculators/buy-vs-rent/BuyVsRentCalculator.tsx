@@ -29,7 +29,8 @@ interface CalculationResult {
   homeValueAfterYears: number
   investmentValueIfRenting: number
   recommendation: 'buy' | 'rent'
-  savings: number
+  savings: number,
+  years: number
 }
 
 export function BuyVsRentCalculator() {
@@ -189,14 +190,16 @@ export function BuyVsRentCalculator() {
         lastYearlyRent = lastYearlyRent * (1 + rentIncreaseRate);
       totalRentingCosts += lastYearlyRent;
 
-      realTotalBuyingCosts = totalBuyingCosts + ((downPayment < 20 && totalPaidMortgage < totalMortgage * 0.8) ? costPMI : 0);
-      netWealth = homeEquity + downPayment - realTotalBuyingCosts;
+      realTotalBuyingCosts = totalBuyingCosts +
+          ((downPayment < 20 && totalPaidMortgage < totalMortgage * 0.8) ? costPMI : 0) +
+          (marketHomeValue * closingCostsSellingPercent);
+      netWealth = marketHomeValue - realTotalBuyingCosts;
       rentWealth = totalStockBalance - totalRentingCosts;
     }
 
     const buyingMonthlyTotal = realTotalBuyingCosts / loanTerm / 12;
     const averageRentPaid = totalRentingCosts / loanTerm / 12;
-    const buyingNetWorth = marketHomeValue - realTotalBuyingCosts - (marketHomeValue * closingCostsSellingPercent);
+    const buyingNetWorth = marketHomeValue - realTotalBuyingCosts;
     const rentingNetWorth = totalStockBalance - totalRentingCosts;
 
     return {
@@ -212,6 +215,7 @@ export function BuyVsRentCalculator() {
       savings: Math.abs(buyingNetWorth - rentingNetWorth),
       monthlyRent: monthlyRent,
       averageRentPaid: averageRentPaid,
+      years: loanTerm,
     }
   }
 
@@ -420,7 +424,7 @@ export function BuyVsRentCalculator() {
                   style: 'currency',
                   currency: 'USD',
                   maximumFractionDigits: 0,
-                })}</strong> in your pocket over the time period examined (Loan Term years).</span>
+                })}</strong> in your pocket over the time period examined ({result.years} years).</span>
               </p>
             </div>
 
@@ -431,12 +435,21 @@ export function BuyVsRentCalculator() {
                 <h4 className="text-xl font-bold text-gray-900 mb-4">Buying</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between">
+                    <span className="text-gray-600">{`Home Market Value (in ${result.years} years):`}</span>
+                    <span className="">
+                      {result.homeValueAfterYears.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
                     <LabelWithTooltip
                         className="text-gray-600"
-                        label="Total Paid:"
+                        label={`Total Costs (over ${result.years} years):`}
                         tooltip="This is the total amount you will pay to have that house over the loan term. It is calculated by summing up monthly loan, closing costs, HOA fees, and so on"
                     />
-                    <span className="font-semibold">
+                    <span className="">
                       {result.buyingTotalCost.toLocaleString('en-US', {
                         style: 'currency',
                         currency: 'USD',
@@ -444,47 +457,33 @@ export function BuyVsRentCalculator() {
                       })}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Monthly Loan:</span>
-                    <span className="font-semibold">
-                      {result.buyingMonthlyLoan.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <LabelWithTooltip
-                        className="text-gray-600"
-                        label={`Average Monthly Payment:`}
-                        tooltip="This is the average monthly payment that you will actually pay to have that house over the loan term. It is calculated by dividing the 'Total Paid' by the number of months"
-                    />
-                    <span className="font-semibold">
-                      {result.buyingMonthlyPayment.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <LabelWithTooltip
-                        className="text-gray-600"
-                        label="Home Market Value:"
-                        tooltip="The estimated market value of the house after the loan term"
-                    />
-                    <span className="font-semibold">
-                      {result.homeValueAfterYears.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        maximumFractionDigits: 0,
-                      })}
-                    </span>
-                  </div>
+                  {/*<div className="flex justify-between">*/}
+                  {/*  <span className="text-gray-600">Monthly Loan:</span>*/}
+                  {/*  <span className="font-semibold">*/}
+                  {/*    {result.buyingMonthlyLoan.toLocaleString('en-US', {*/}
+                  {/*      style: 'currency',*/}
+                  {/*      currency: 'USD',*/}
+                  {/*    })}*/}
+                  {/*  </span>*/}
+                  {/*</div>*/}
+                  {/*<div className="flex justify-between">*/}
+                  {/*  <LabelWithTooltip*/}
+                  {/*      className="text-gray-600"*/}
+                  {/*      label={`Average Monthly Payment:`}*/}
+                  {/*      tooltip="This is the average monthly payment that you will actually pay to have that house over the loan term. It is calculated by dividing the 'Total Paid' by the number of months"*/}
+                  {/*  />*/}
+                  {/*  <span className="font-semibold">*/}
+                  {/*    {result.buyingMonthlyPayment.toLocaleString('en-US', {*/}
+                  {/*      style: 'currency',*/}
+                  {/*      currency: 'USD',*/}
+                  {/*    })}*/}
+                  {/*  </span>*/}
+                  {/*</div>*/}
                   <div className="flex justify-between">
                     <LabelWithTooltip
-                        className="text-gray-600"
-                        label="Net Worth:"
-                        tooltip="The estimated market value of the house after the loan term"
+                        className="text-gray-600 font-semibold"
+                        label="Gain/Loss:"
+                        tooltip={`How much you will have earned/lost after ${result.years} years`}
                     />
                     <span className="font-semibold text-green-600">
                       {result.buyingNetWorth.toLocaleString('en-US', {
@@ -501,55 +500,27 @@ export function BuyVsRentCalculator() {
               <div className="bg-white rounded-lg p-6 shadow-md">
                 <h4 className="text-xl font-bold text-gray-900 mb-4">Renting</h4>
                 <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <LabelWithTooltip
-                        className="text-gray-600"
-                        label={`Total Rent Paid:`}
-                        tooltip="Total amount paid to rent the house over the loan term. This is the sum of the monthly rent and the security deposit, also considering the 'Rent Increase Rate'"
-                    />
-                    <span className="font-semibold">
-                      {result.rentingTotalCost.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        maximumFractionDigits: 0,
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <LabelWithTooltip
-                        className="text-gray-600"
-                        label={`Monthly Rent:`}
-                        tooltip="The initial rent"
-                    />
-                    <span className="font-semibold">
-                      {result.monthlyRent.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        maximumFractionDigits: 0,
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <LabelWithTooltip
-                        className="text-gray-600"
-                        label={`Average Rent Paid:`}
-                        tooltip="This is the average rent payment that you will actually pay to rent the house over the loan term. It is calculated by dividing the 'Total Rent Paid' by the number of months"
-                    />
-                    <span className="font-semibold">
-                      {result.averageRentPaid.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        maximumFractionDigits: 0,
-                      })}
-                    </span>
-                  </div>
+                  {/*<div className="flex justify-between">*/}
+                  {/*  <LabelWithTooltip*/}
+                  {/*      className="text-gray-600"*/}
+                  {/*      label={`Average Rent Paid:`}*/}
+                  {/*      tooltip="This is the average rent payment that you will actually pay to rent the house over the loan term. It is calculated by dividing the 'Total Rent Paid' by the number of months"*/}
+                  {/*  />*/}
+                  {/*  <span className="font-semibold">*/}
+                  {/*    {result.averageRentPaid.toLocaleString('en-US', {*/}
+                  {/*      style: 'currency',*/}
+                  {/*      currency: 'USD',*/}
+                  {/*      maximumFractionDigits: 0,*/}
+                  {/*    })}*/}
+                  {/*  </span>*/}
+                  {/*</div>*/}
                   <div className="flex justify-between">
                     <LabelWithTooltip
                         className="text-gray-600"
                         label={`Investment Value:`}
-                        tooltip="This is the money you will have after the loan term investing the amount saved every month if you won't buy"
+                        tooltip={`This is the money you will have after ${result.years} years investing the amount saved every month if you won't buy`}
                     />
-                    <span className="font-semibold">
+                    <span className="">
                       {result.investmentValueIfRenting.toLocaleString('en-US', {
                         style: 'currency',
                         currency: 'USD',
@@ -558,10 +529,19 @@ export function BuyVsRentCalculator() {
                     </span>
                   </div>
                   <div className="flex justify-between">
+                    <span className="text-gray-600">{`Total Costs (over ${result.years} years):`}</span>
+                    <span className="">
+                      {result.rentingTotalCost.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                      })}
+                      </span>
+                  </div>
+                  <div className="flex justify-between">
                     <LabelWithTooltip
-                        className="text-gray-600"
-                        label={`Net Worth:`}
-                        tooltip="This is the money you will have after the loan term investing the amount saved every month if you won't buy"
+                        className="font-semibold text-gray-600"
+                        label={`Gain/Loss:`}
+                        tooltip={`How much you will have earned/lost after ${result.years} years`}
                     />
                     <span className="font-semibold text-green-600">
                       {result.rentingNetWorth.toLocaleString('en-US', {

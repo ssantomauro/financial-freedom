@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
-import { sendVerificationEmail, sendNewUserNotification } from '@/lib/email/mailer'
+import { sendVerificationEmail } from '@/lib/email/mailer'
 
 export async function POST(request: Request) {
   try {
@@ -75,17 +75,7 @@ export async function POST(request: Request) {
       // Don't fail the signup if email fails to send
     }
 
-    // Send admin notification (non-blocking)
-    try {
-      await sendNewUserNotification({
-        email,
-        name: name || null,
-        signupMethod: 'Email/Password',
-      })
-    } catch (emailError) {
-      console.error('Failed to send admin notification:', emailError)
-      // Don't fail the signup if admin email fails to send
-    }
+
 
     return NextResponse.json({
       success: true,

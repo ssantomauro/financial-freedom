@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
+import { sendNewUserNotification } from '@/lib/email/mailer'
 
 export async function GET(request: Request) {
   try {
@@ -60,6 +61,18 @@ export async function GET(request: Request) {
     await prisma.verificationToken.delete({
       where: { token },
     })
+
+    // Send admin notification (non-blocking)
+    try {
+      await sendNewUserNotification({
+        email: user.email,
+        name: user.name,
+        signupMethod: 'Email/Password',
+      })
+    } catch (emailError) {
+      console.error('Failed to send admin notification:', emailError)
+      // Don't fail the verification if admin email fails to send
+    }
 
     // Redirect to login with success message
     return NextResponse.redirect(

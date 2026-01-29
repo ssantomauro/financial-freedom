@@ -9,9 +9,11 @@ import { OAuthButtons } from '@/components/auth/OAuthButtons'
 import { Divider } from '@/components/auth/Divider'
 import { Alert } from '@/components/auth/Alert'
 import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter()
+  const { executeRecaptcha } = useGoogleReCaptcha()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -45,12 +47,22 @@ export default function SignupPage() {
     setIsLoading(true)
 
     try {
+      let recaptchaToken = ''
+      if (executeRecaptcha) {
+        recaptchaToken = await executeRecaptcha('signup')
+      }
+
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({
+          email,
+          password,
+          name,
+          recaptchaToken
+        }),
       })
 
       const data = await response.json()
@@ -194,5 +206,21 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <GoogleReCaptchaProvider
+      reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+      scriptProps={{
+        async: false,
+        defer: false,
+        appendTo: 'head',
+        nonce: undefined,
+      }}
+    >
+      <SignupForm />
+    </GoogleReCaptchaProvider>
   )
 }

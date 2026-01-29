@@ -3,13 +3,25 @@ import { prisma } from '@/lib/db/prisma'
 import { sendNewUserNotification } from '@/lib/email/mailer'
 
 export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const token = searchParams.get('token')
+
+  if (!token) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  // Redirect to the frontend verification page
+  return NextResponse.redirect(new URL(`/verify-email?token=${token}`, request.url))
+}
+
+export async function POST(request: Request) {
   try {
-    const { searchParams } = new URL(request.url)
-    const token = searchParams.get('token')
+    const { token } = await request.json()
 
     if (!token) {
-      return NextResponse.redirect(
-        new URL('/login?error=Invalid verification link', request.url)
+      return NextResponse.json(
+        { error: 'Verification token is required' },
+        { status: 400 }
       )
     }
 
@@ -21,8 +33,9 @@ export async function GET(request: Request) {
     })
 
     if (!verificationToken) {
-      return NextResponse.redirect(
-        new URL('/login?error=Invalid or expired verification link', request.url)
+      return NextResponse.json(
+        { error: 'Invalid or expired verification link' },
+        { status: 400 }
       )
     }
 
@@ -33,8 +46,9 @@ export async function GET(request: Request) {
         where: { token },
       })
 
-      return NextResponse.redirect(
-        new URL('/login?error=Verification link has expired. Please sign up again.', request.url)
+      return NextResponse.json(
+        { error: 'Verification link has expired. Please sign up again.' },
+        { status: 400 }
       )
     }
 
@@ -44,8 +58,9 @@ export async function GET(request: Request) {
     })
 
     if (!user) {
-      return NextResponse.redirect(
-        new URL('/login?error=User not found', request.url)
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 400 }
       )
     }
 
@@ -74,14 +89,15 @@ export async function GET(request: Request) {
       // Don't fail the verification if admin email fails to send
     }
 
-    // Redirect to login with success message
-    return NextResponse.redirect(
-      new URL('/login?verified=true', request.url)
-    )
+    return NextResponse.json({
+      success: true,
+      message: 'Email verified successfully',
+    })
   } catch (error) {
     console.error('Email verification error:', error)
-    return NextResponse.redirect(
-      new URL('/login?error=Verification failed. Please try again.', request.url)
+    return NextResponse.json(
+      { error: 'Verification failed. Please try again.' },
+      { status: 500 }
     )
   }
 }

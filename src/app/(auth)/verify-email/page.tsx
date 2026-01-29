@@ -7,25 +7,53 @@ import { Alert } from '@/components/auth/Alert'
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams()
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
+  const token = searchParams.get('token')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
 
-  useEffect(() => {
-    const type = searchParams.get('type')
-    const tokenHash = searchParams.get('token_hash')
+  const handleVerify = async () => {
+    if (!token) return
 
-    if (type === 'signup' || type === 'email') {
-      setStatus('success')
-      setMessage('Your email has been verified successfully!')
-    } else if (tokenHash) {
-      // Email verification successful (handled by Supabase)
-      setStatus('success')
-      setMessage('Your email has been verified successfully!')
-    } else {
+    setStatus('loading')
+    try {
+      const response = await fetch('/api/auth/verify-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setStatus('success')
+        setMessage(data.message)
+      } else {
+        setStatus('error')
+        setMessage(data.error || 'Verification failed')
+      }
+    } catch (error) {
       setStatus('error')
-      setMessage('Invalid verification link')
+      setMessage('An error occurred during verification')
     }
-  }, [searchParams])
+  }
+
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full text-center">
+          <Alert type="error" message="Invalid verification link. Missing token." />
+          <Link
+            href="/login"
+            className="inline-block mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go to Login
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -36,7 +64,21 @@ function VerifyEmailContent() {
           </h2>
         </div>
 
-        <div className="mt-8 bg-white py-8 px-6 shadow-lg rounded-lg">
+        <div className="mt-8 bg-white py-8 px-6 shadow-lg rounded-lg text-center">
+          {status === 'idle' && (
+            <div>
+              <p className="mb-6 text-gray-600">
+                Click the button below to verify your email address.
+              </p>
+              <button
+                onClick={handleVerify}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Verify Email
+              </button>
+            </div>
+          )}
+
           {status === 'loading' && (
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -78,19 +120,6 @@ function VerifyEmailContent() {
             <div className="space-y-6">
               <Alert type="error" message={message} />
               <div className="text-center">
-                <svg
-                  className="mx-auto h-16 w-16 text-red-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
                 <p className="mt-4 text-gray-600">
                   The verification link may be invalid or expired
                 </p>
@@ -108,6 +137,7 @@ function VerifyEmailContent() {
     </div>
   )
 }
+
 
 export default function VerifyEmailPage() {
   return (

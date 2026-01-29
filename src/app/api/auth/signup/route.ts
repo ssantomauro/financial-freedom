@@ -6,7 +6,7 @@ import { sendVerificationEmail } from '@/lib/email/mailer'
 
 export async function POST(request: Request) {
   try {
-    const { email, password, name } = await request.json()
+    const { email, password, name, recaptchaToken } = await request.json()
 
     if (!email || !password) {
       return NextResponse.json(
@@ -14,6 +14,30 @@ export async function POST(request: Request) {
         { status: 400 }
       )
     }
+
+    // Verify reCAPTCHA
+    if (process.env.RECAPTCHA_SECRET_KEY) {
+      if (!recaptchaToken) {
+        return NextResponse.json(
+          { error: 'reCAPTCHA verification failed' },
+          { status: 400 }
+        )
+      }
+
+      const recaptchaVerifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+      const recaptchaRes = await fetch(recaptchaVerifyUrl, { method: 'POST' })
+      const recaptchaData = await recaptchaRes.json()
+
+      if (!recaptchaData.success || recaptchaData.score < 0.5) {
+        console.warn('reCAPTCHA blocked signup:', { email, score: recaptchaData.score })
+        return NextResponse.json(
+          { error: 'Suspicious activity detected. Please try again later.' },
+          { status: 400 }
+        )
+      }
+    }
+
+
 
     if (password.length < 6) {
       return NextResponse.json(
@@ -62,7 +86,7 @@ export async function POST(request: Request) {
 
     // Send verification email
     const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-    const verificationUrl = `${origin}/api/auth/verify-email?token=${verificationToken}`
+    const verificationUrl = `${origin}/verify-email?token=${verificationToken}`
 
     try {
       await sendVerificationEmail({

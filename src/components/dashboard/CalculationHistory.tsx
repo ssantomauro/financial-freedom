@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Clock, ChevronRight, Calculator, Home, TrendingUp, Target, PiggyBank, Baby } from 'lucide-react'
-import { PaywallModal } from '@/components/calculator/PaywallModal'
 
 interface Calculation {
   id: string
@@ -11,10 +10,6 @@ interface Calculation {
   inputData: any
   resultData: any
   createdAt: string
-}
-
-interface CalculationHistoryProps {
-  hasLifetimeAccess: boolean
 }
 
 const CALCULATOR_NAMES: { [key: string]: string } = {
@@ -44,19 +39,14 @@ const CALCULATOR_ICONS: { [key: string]: any } = {
   'mortgage': Calculator,
 }
 
-export function CalculationHistory({ hasLifetimeAccess }: CalculationHistoryProps) {
+export function CalculationHistory() {
   const [calculations, setCalculations] = useState<Calculation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showPaywall, setShowPaywall] = useState(false)
 
   useEffect(() => {
-    if (hasLifetimeAccess) {
-      fetchHistory()
-    } else {
-      setLoading(false)
-    }
-  }, [hasLifetimeAccess])
+    fetchHistory()
+  }, [])
 
   const fetchHistory = async () => {
     try {
@@ -75,38 +65,6 @@ export function CalculationHistory({ hasLifetimeAccess }: CalculationHistoryProp
     } finally {
       setLoading(false)
     }
-  }
-
-  if (!hasLifetimeAccess) {
-    return (
-      <>
-        <section className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-8 mb-8">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Clock className="w-8 h-8 text-blue-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              Calculation History
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Upgrade to lifetime access to view and access your past calculations
-            </p>
-            <button
-              onClick={() => setShowPaywall(true)}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-            >
-              Upgrade to Lifetime Access
-            </button>
-          </div>
-        </section>
-
-        <PaywallModal
-          isOpen={showPaywall}
-          onClose={() => setShowPaywall(false)}
-          calculatorName="Dashboard"
-        />
-      </>
-    )
   }
 
   if (loading) {

@@ -4,16 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { CompoundInterestForm, CompoundInterestInputs } from '@/components/calculator/CompoundInterestForm'
 import { calculateCompoundInterest, CompoundInterestResult } from '@/lib/calculations/compoundInterest'
-import { PaywallModal } from '@/components/calculator/PaywallModal'
 import { TrendingUp, DollarSign, Percent, ArrowLeft } from 'lucide-react'
 import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
-
-interface UsageStatus {
-  canUse: boolean
-  hasLifetimeAccess: boolean
-  calculationsUsed: number
-  remainingCalculations: number
-}
 
 interface CompoundInterestCalculatorProps {
   calculationId?: string | null
@@ -22,31 +14,19 @@ interface CompoundInterestCalculatorProps {
 export function CompoundInterestCalculator({ calculationId }: CompoundInterestCalculatorProps) {
   const [inputs, setInputs] = useState<CompoundInterestInputs | null>(null)
   const [result, setResult] = useState<CompoundInterestResult | null>(null)
-  const [usageStatus, setUsageStatus] = useState<UsageStatus | null>(null)
-  const [showPaywall, setShowPaywall] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [initialValues, setInitialValues] = useState<CompoundInterestInputs | null>(null)
   const { trackEvent } = usePostHog()
 
-  // Track calculator opened
   useEffect(() => {
     trackEvent(AnalyticsEvents.CALCULATOR_OPENED, {
       calculator: 'compound-interest',
       from_history: !!calculationId
     })
 
-    // Fetch usage status and past calculation if needed
-    const fetchData = async () => {
-      try {
-        // Fetch usage status
-        const statusRes = await fetch('/api/calculations/usage-status?calculatorType=compound-interest')
-        if (statusRes.ok) {
-          const statusData = await statusRes.json()
-          setUsageStatus(statusData)
-        }
-
-        // Fetch past calculation if ID provided
-        if (calculationId) {
+    if (calculationId) {
+      const fetchCalculation = async () => {
+        try {
           const calcRes = await fetch(`/api/calculations/${calculationId}`)
           if (calcRes.ok) {
             const calcData = await calcRes.json()
@@ -56,13 +36,12 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
               setResult(calcData.resultData)
             }
           }
+        } catch (error) {
+          console.error('Error fetching calculation:', error)
         }
-      } catch (error) {
-        console.error('Error fetching data:', error)
       }
+      fetchCalculation()
     }
-
-    fetchData()
   }, [calculationId, trackEvent])
 
   const handleCalculate = async (calculatorInputs: CompoundInterestInputs) => {
@@ -70,30 +49,15 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
 
     trackEvent(AnalyticsEvents.CALCULATOR_STARTED, {
       calculator: 'compound-interest',
-      has_lifetime_access: usageStatus?.hasLifetimeAccess,
-      calculations_remaining: usageStatus?.remainingCalculations,
       include_inflation: calculatorInputs.includeInflation
     })
 
     try {
-      // Check usage limits
-      if (!usageStatus?.hasLifetimeAccess && usageStatus?.remainingCalculations === 0) {
-        setShowPaywall(true)
-        trackEvent(AnalyticsEvents.PAYWALL_SHOWN, {
-          calculator: 'compound-interest',
-          trigger: 'no_calculations_remaining'
-        })
-        setIsLoading(false)
-        return
-      }
-
-      // Perform calculation
       const calculationResult = calculateCompoundInterest(calculatorInputs)
 
       setInputs(calculatorInputs)
       setResult(calculationResult)
 
-      // Save to database
       const saveRes = await fetch('/api/calculations/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -110,28 +74,11 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
           final_value: calculationResult.finalNominalValue,
           total_interest: calculationResult.totalNominalInterest,
           include_inflation: calculatorInputs.includeInflation,
-          has_lifetime_access: usageStatus?.hasLifetimeAccess
         })
 
         trackEvent(AnalyticsEvents.CALCULATION_SAVED, {
           calculator: 'compound-interest'
         })
-
-        // Update usage status
-        const statusRes = await fetch('/api/calculations/usage-status?calculatorType=compound-interest')
-        if (statusRes.ok) {
-          const newStatus = await statusRes.json()
-          setUsageStatus(newStatus)
-
-          // Show paywall if last free calculation
-          if (!newStatus.hasLifetimeAccess && newStatus.remainingCalculations === 0) {
-            setShowPaywall(true)
-            trackEvent(AnalyticsEvents.PAYWALL_SHOWN, {
-              calculator: 'compound-interest',
-              trigger: 'after_last_free_calculation'
-            })
-          }
-        }
       }
     } catch (error) {
       console.error('Calculation error:', error)
@@ -185,54 +132,14 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
           </div>
         </div>
 
-        {/* Usage Status Banner */}
-        {usageStatus && !usageStatus.hasLifetimeAccess && usageStatus.remainingCalculations === 0 && (
-          <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <p className="text-yellow-800 font-medium">
-                You've used all 3 free calculations. Upgrade to lifetime access for unlimited calculations!
-              </p>
-              <button
-                onClick={() => setShowPaywall(true)}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap"
-              >
-                Upgrade Now
-              </button>
-            </div>
-          </div>
-        )}
-
         <div className="grid lg:grid-cols-5 gap-8">
           {/* Form - Left Side */}
           <div className="lg:col-span-2">
             <CompoundInterestForm
               onSubmit={handleCalculate}
-              isDisabled={isLoading || (usageStatus ? !usageStatus.canUse : false)}
+              isDisabled={isLoading}
               initialValues={initialValues}
             />
-
-            {/* Remaining Calculations Info */}
-            {usageStatus && !usageStatus.hasLifetimeAccess && usageStatus.remainingCalculations > 0 && (
-              <div className="text-center mt-4">
-                <p className="text-sm text-gray-600">
-                  {usageStatus.remainingCalculations === 3 ? (
-                    <>You have <strong className="text-blue-600">{usageStatus.remainingCalculations} free calculations</strong> remaining</>
-                  ) : usageStatus.remainingCalculations === 1 ? (
-                    <>This is your <strong className="text-orange-600">last free calculation</strong></>
-                  ) : (
-                    <>You have <strong className="text-orange-600">{usageStatus.remainingCalculations} free calculations</strong> remaining</>
-                  )}
-                </p>
-              </div>
-            )}
-
-            {usageStatus && usageStatus.hasLifetimeAccess && (
-              <div className="text-center mt-4">
-                <p className="text-sm text-green-600 font-medium">
-                  ✓ You have unlimited calculations
-                </p>
-              </div>
-            )}
           </div>
 
           {/* Results - Right Side */}
@@ -383,12 +290,6 @@ export function CompoundInterestCalculator({ calculationId }: CompoundInterestCa
         </div>
       </div>
 
-      {/* Paywall Modal */}
-      <PaywallModal
-        isOpen={showPaywall}
-        onClose={() => setShowPaywall(false)}
-        calculatorName="Compound Interest Calculator"
-      />
     </div>
   )
 }

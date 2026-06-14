@@ -5,17 +5,9 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Home, ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react'
 import { BuyVsRentForm, BuyVsRentInputs } from '@/components/calculator/BuyVsRentForm'
-import { PaywallModal } from '@/components/calculator/PaywallModal'
 import { MathExplanationModal } from '@/components/calculator/MathExplanationModal'
 import {LabelWithTooltip} from "@/components/ui/LabelWithTooltip";
 import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
-
-interface UsageStatus {
-  canUse: boolean
-  hasLifetimeAccess: boolean
-  calculationsUsed: number
-  remainingCalculations: number // -1 means unlimited
-}
 
 interface CalculationResult {
   buyingTotalCost: number
@@ -38,9 +30,6 @@ export function BuyVsRentCalculator() {
   const calculationId = searchParams.get('calculation')
   const { trackEvent } = usePostHog()
 
-  const [usageStatus, setUsageStatus] = useState<UsageStatus | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [showPaywall, setShowPaywall] = useState(false)
   const [showMathExplanation, setShowMathExplanation] = useState(false)
   const [result, setResult] = useState<CalculationResult | null>(null)
   const [calculating, setCalculating] = useState(false)
@@ -48,33 +37,15 @@ export function BuyVsRentCalculator() {
   const [loadingCalculation, setLoadingCalculation] = useState(false)
 
   useEffect(() => {
-    // Track calculator opened
     trackEvent(AnalyticsEvents.CALCULATOR_OPENED, {
       calculator: 'buy-vs-rent',
       from_history: !!calculationId
     })
 
-    checkUsageStatus()
-
-    // Load past calculation if ID is provided
     if (calculationId) {
       loadCalculation(calculationId)
     }
   }, [calculationId, trackEvent])
-
-  const checkUsageStatus = async (): Promise<UsageStatus | null> => {
-    try {
-      const response = await fetch('/api/calculations/usage-status?calculatorType=buy-vs-rent')
-      const data = await response.json()
-      setUsageStatus(data)
-      return data
-    } catch (error) {
-      console.error('Failed to check usage status:', error)
-      return null
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const loadCalculation = async (id: string) => {
     setLoadingCalculation(true)
@@ -220,39 +191,22 @@ export function BuyVsRentCalculator() {
   }
 
   const handleSubmit = async (inputs: BuyVsRentInputs) => {
-    // Track calculation started
     trackEvent(AnalyticsEvents.CALCULATOR_STARTED, {
       calculator: 'buy-vs-rent',
-      has_lifetime_access: usageStatus?.hasLifetimeAccess,
-      calculations_remaining: usageStatus?.remainingCalculations
     })
-
-    // Check if user can use the calculator
-    if (!usageStatus?.canUse) {
-      trackEvent(AnalyticsEvents.PAYWALL_SHOWN, {
-        calculator: 'buy-vs-rent',
-        trigger: 'no_calculations_remaining'
-      })
-      setShowPaywall(true)
-      return
-    }
 
     setCalculating(true)
 
     try {
-      // Calculate results
       const calculationResult = calculateResults(inputs)
       setResult(calculationResult)
 
-      // Track calculation completed
       trackEvent(AnalyticsEvents.CALCULATION_COMPLETED, {
         calculator: 'buy-vs-rent',
         recommendation: calculationResult.recommendation,
         savings: calculationResult.savings,
-        has_lifetime_access: usageStatus?.hasLifetimeAccess
       })
 
-      // Save to database
       await fetch('/api/calculations/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -266,20 +220,6 @@ export function BuyVsRentCalculator() {
       trackEvent(AnalyticsEvents.CALCULATION_SAVED, {
         calculator: 'buy-vs-rent'
       })
-
-      // Update usage status
-      const updatedStatus = await checkUsageStatus()
-
-      // Show paywall after 3rd calculation (when remaining becomes 0)
-      if (!usageStatus.hasLifetimeAccess && updatedStatus && updatedStatus.remainingCalculations === 0) {
-        setTimeout(() => {
-          trackEvent(AnalyticsEvents.PAYWALL_SHOWN, {
-            calculator: 'buy-vs-rent',
-            trigger: 'after_last_free_calculation'
-          })
-          setShowPaywall(true)
-        }, 2000) // Show paywall 2 seconds after seeing results
-      }
     } catch (error) {
       console.error('Calculation error:', error)
       alert('Failed to save calculation. Please try again.')
@@ -287,21 +227,6 @@ export function BuyVsRentCalculator() {
       setCalculating(false)
     }
   }
-
-  if (loading) {
-    return (
-      <div className="py-8 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/2 mx-auto mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/3 mx-auto"></div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const isFormDisabled = usageStatus ? !usageStatus.canUse : false
 
   return (
     <div className="py-8 px-4">
@@ -338,23 +263,6 @@ export function BuyVsRentCalculator() {
           </p>
         </div>
 
-        {/* Usage Status Banner */}
-        {usageStatus && !usageStatus.hasLifetimeAccess && usageStatus.remainingCalculations === 0 && (
-          <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <p className="text-yellow-800 font-medium">
-                You've used all 3 free calculations. Upgrade to lifetime access for unlimited calculations!
-              </p>
-              <button
-                onClick={() => setShowPaywall(true)}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap"
-              >
-                Upgrade Now
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Calculator Form */}
         <div className="mb-8">
           {loadingCalculation ? (
@@ -365,32 +273,9 @@ export function BuyVsRentCalculator() {
           ) : (
             <BuyVsRentForm
               onSubmit={handleSubmit}
-              isDisabled={isFormDisabled}
+              isDisabled={calculating}
               initialValues={initialInputs}
             />
-          )}
-
-          {/* Remaining Calculations Info */}
-          {usageStatus && !usageStatus.hasLifetimeAccess && usageStatus.remainingCalculations > 0 && (
-            <div className="text-center mt-4">
-              <p className="text-sm text-gray-600">
-                {usageStatus.remainingCalculations === 3 ? (
-                  <>You have <strong className="text-blue-600">{usageStatus.remainingCalculations} free calculations</strong> remaining</>
-                ) : usageStatus.remainingCalculations === 1 ? (
-                  <>This is your <strong className="text-orange-600">last free calculation</strong></>
-                ) : (
-                  <>You have <strong className="text-orange-600">{usageStatus.remainingCalculations} free calculations</strong> remaining</>
-                )}
-              </p>
-            </div>
-          )}
-
-          {usageStatus && usageStatus.hasLifetimeAccess && (
-            <div className="text-center mt-4">
-              <p className="text-sm text-green-600 font-medium">
-                ✓ You have unlimited calculations
-              </p>
-            </div>
           )}
         </div>
 
@@ -580,13 +465,6 @@ export function BuyVsRentCalculator() {
             </div>
           </div>
         )}
-
-        {/* Paywall Modal */}
-        <PaywallModal
-          isOpen={showPaywall}
-          onClose={() => setShowPaywall(false)}
-          calculatorName="Buy vs Rent Calculator"
-        />
 
         {/* Math Explanation Modal */}
         <MathExplanationModal

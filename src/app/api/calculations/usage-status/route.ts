@@ -16,44 +16,23 @@ export async function GET(request: Request) {
       )
     }
 
-    // Get the user from database
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       include: {
         calculations: {
-          where: {
-            calculatorType,
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
+          where: { calculatorType },
+          orderBy: { createdAt: 'desc' },
         },
       },
     })
 
-    const MAX_FREE_CALCULATIONS = 3
     const calculationsUsed = dbUser?.calculations.length || 0
-    const remainingCalculations = Math.max(0, MAX_FREE_CALCULATIONS - calculationsUsed)
-
-    // Check if user has lifetime access
-    if (dbUser?.hasLifetimeAccess) {
-      return NextResponse.json({
-        canUse: true,
-        hasLifetimeAccess: true,
-        calculationsUsed,
-        remainingCalculations: -1, // -1 means unlimited
-        lastCalculation: dbUser?.calculations[0] || null,
-      })
-    }
-
-    // Check if user has remaining free calculations
-    const canUse = remainingCalculations > 0
 
     return NextResponse.json({
-      canUse,
-      hasLifetimeAccess: false,
+      canUse: true,
+      hasLifetimeAccess: true,
       calculationsUsed,
-      remainingCalculations,
+      remainingCalculations: -1,
       lastCalculation: dbUser?.calculations[0] || null,
     })
   } catch (error) {

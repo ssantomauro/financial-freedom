@@ -16,8 +16,6 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  const hasLifetimeAccess = user.hasLifetimeAccess || false
-
   return (
       <div className="py-12 px-4">
         {/* Identify user with PostHog */}
@@ -25,7 +23,7 @@ export default async function DashboardPage() {
             userId={user.id}
             email={user.email || ''}
             name={user.name || ''}
-            hasLifetimeAccess={hasLifetimeAccess}
+            hasLifetimeAccess={true}
         />
 
         {/* Track dashboard view */}
@@ -43,7 +41,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Calculation History */}
-          <CalculationHistory hasLifetimeAccess={hasLifetimeAccess} />
+          <CalculationHistory />
 
           {/* Calculators Grid */}
           <section>

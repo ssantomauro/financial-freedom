@@ -53,20 +53,16 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            {/*<div className="mt-12 flex items-center justify-center gap-8 text-sm text-gray-600">*/}
-            {/*  <div className="flex items-center gap-2">*/}
-            {/*    <CheckCircle className="w-5 h-5 text-green-500" />*/}
-            {/*    No Credit Card Required*/}
-            {/*  </div>*/}
-            {/*  <div className="flex items-center gap-2">*/}
-            {/*    <CheckCircle className="w-5 h-5 text-green-500" />*/}
-            {/*    100% Free Forever*/}
-            {/*  </div>*/}
-            {/*  <div className="flex items-center gap-2">*/}
-            {/*    <CheckCircle className="w-5 h-5 text-green-500" />*/}
-            {/*    Trusted by 50,000+ Users*/}
-            {/*  </div>*/}
-            {/*</div>*/}
+            <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+                No Credit Card Required
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+                100% Free
+              </div>
+            </div>
           </div>
         </section>
 
@@ -169,7 +165,7 @@ export default async function HomePage() {
                   <Calculator className="w-12 h-12 text-blue-600 mb-4" />
                   <h3 className="text-2xl font-bold mb-4">Ready to Take Control?</h3>
                   <p className="text-gray-600 mb-6">
-                    Join thousands of users making smarter financial decisions every day.
+                    Create a free account and start using the calculators in under a minute.
                   </p>
                   <Link
                       href="/signup"
@@ -213,14 +209,37 @@ function CalculatorCard({
                           title,
                           description,
                           href,
-                          color
+                          color,
+                          comingSoon
                         }: {
   icon: any
   title: string
   description: string
-  href: string
+  href: string | null
   color: string
+  comingSoon?: boolean
 }) {
+  if (comingSoon || !href) {
+    return (
+        <div className="block p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+          <div className="flex items-start justify-between mb-4">
+            <div className={`w-14 h-14 ${color} opacity-60 rounded-lg flex items-center justify-center`}>
+              <Icon className="w-7 h-7 text-white" />
+            </div>
+            <span className="bg-gray-200 text-gray-700 text-xs font-semibold px-3 py-1 rounded-full">
+              Coming soon
+            </span>
+          </div>
+          <h3 className="text-xl font-bold text-gray-700 mb-3">
+            {title}
+          </h3>
+          <p className="text-gray-500">
+            {description}
+          </p>
+        </div>
+    )
+  }
+
   return (
       <Link
           href={href}
@@ -273,7 +292,7 @@ const calculators = [
     icon: TrendingUp,
     title: 'Compound Interest Calculator',
     description: 'See how your money grows over time with compound interest. Visualize the power of consistent investing.',
-    href: '/compound-interest',
+    href: '/signup',
     color: 'bg-green-500'
   },
   {
@@ -281,7 +300,8 @@ const calculators = [
     icon: Target,
     title: 'Retirement Calculator',
     description: 'Plan for a comfortable retirement. Calculate how much you need to save and when you can retire.',
-    href: '/retirement',
+    href: null,
+    comingSoon: true,
     color: 'bg-purple-500'
   },
   {
@@ -289,7 +309,8 @@ const calculators = [
     icon: PiggyBank,
     title: 'Savings Goal Calculator',
     description: 'Set and achieve your savings goals. Calculate monthly contributions needed for any financial target.',
-    href: '/savings',
+    href: null,
+    comingSoon: true,
     color: 'bg-orange-500'
   },
   {
@@ -297,7 +318,8 @@ const calculators = [
     icon: Baby,
     title: 'Children Savings Calculator',
     description: 'Plan for your children\'s future. Calculate education costs and monthly savings needed.',
-    href: '/children-savings',
+    href: null,
+    comingSoon: true,
     color: 'bg-pink-500'
   },
   {
@@ -305,7 +327,8 @@ const calculators = [
     icon: Calculator,
     title: 'Mortgage Calculator',
     description: 'Calculate your monthly mortgage payments, total interest, and amortization schedule.',
-    href: '/mortgage',
+    href: null,
+    comingSoon: true,
     color: 'bg-indigo-500'
   }
 ]

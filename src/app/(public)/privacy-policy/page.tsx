@@ -134,6 +134,12 @@ export default function PrivacyPolicyPage() {
               <p className="text-gray-700">
                 We use cookies and similar tracking technologies to collect and track information about your activities on our service. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our service.
               </p>
+              <p className="text-gray-700 mt-4">
+                <strong>Meta Pixel:</strong> We use the Meta Pixel, a tool provided by Meta Platforms, Inc., to measure the effectiveness of our advertising on Facebook and Instagram. The Meta Pixel uses cookies to record page views and when an account is created, and shares this information, together with technical data such as your IP address and browser information, with Meta. We do not send your name, email address, or any calculator data to Meta. Meta may use this information as described in its <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Privacy Policy</a>. You can control how Meta uses this data for ads in your <a href="https://www.facebook.com/adpreferences/ad_settings" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Facebook ad settings</a>, or block these cookies in your browser.
+              </p>
+              <p className="text-gray-700 mt-4">
+                <strong>PostHog:</strong> We use PostHog to understand how people use our service, such as which pages are visited and which calculators are used, so we can improve it.
+              </p>
             </section>
 
             <section className="mb-8">

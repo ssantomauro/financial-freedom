@@ -113,7 +113,7 @@ export default function AboutPage() {
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">No Hidden Costs</h4>
                   <p className="text-gray-600 text-sm">
-                    Start with 3 free calculations per calculator. One affordable lifetime payment for unlimited access—no subscriptions.
+                    Every calculator is free, with unlimited calculations. No subscriptions, no paywalls, no credit card.
                   </p>
                 </div>
               </div>
@@ -178,7 +178,7 @@ export default function AboutPage() {
               Start For Free
             </Link>
             <p className="text-gray-500 text-sm mt-4">
-              3 free calculations per calculator • No credit card required
+              100% free • No credit card required
             </p>
           </div>
         </div>

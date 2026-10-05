@@ -4,6 +4,8 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "@/lib/db/prisma"
 import bcrypt from "bcryptjs"
 import { sendNewUserNotification } from "@/lib/email/mailer"
+import { cookies } from "next/headers"
+import { NEW_SIGNUP_COOKIE } from "@/lib/analytics/metaPixel"
 
 export const authOptions: NextAuthConfig = {
   providers: [
@@ -115,6 +117,14 @@ export const authOptions: NextAuthConfig = {
             })
 
             user.id = newUser.id
+
+            // Let the client fire the signup conversion after the OAuth redirect
+            try {
+              const cookieStore = await cookies()
+              cookieStore.set(NEW_SIGNUP_COOKIE, 'google', { path: '/', maxAge: 600, sameSite: 'lax' })
+            } catch (cookieError) {
+              console.error('Failed to set new signup cookie:', cookieError)
+            }
 
             // Create account link
             await prisma.account.create({

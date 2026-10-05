@@ -18,8 +18,7 @@ export function PublicFooter() {
             <h4 className="text-white font-semibold mb-4">Top Calculators</h4>
             <ul className="space-y-2 text-sm">
               <li><Link href="/buy-vs-rent" className="hover:text-white transition">Buy vs Rent</Link></li>
-              <li><Link href="/compound-interest" className="hover:text-white transition">Compound Interest</Link></li>
-              <li><Link href="/retirement" className="hover:text-white transition">Retirement Planning</Link></li>
+              <li><Link href="/signup" className="hover:text-white transition">Compound Interest</Link></li>
             </ul>
           </div>
 

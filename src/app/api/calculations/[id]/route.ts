@@ -22,14 +22,6 @@ export async function GET(
       )
     }
 
-    // Only allow lifetime subscribers to view calculation details
-    if (!dbUser.hasLifetimeAccess) {
-      return NextResponse.json(
-        { error: 'This feature is only available for lifetime subscribers' },
-        { status: 403 }
-      )
-    }
-
     // Fetch the calculation
     const calculation = await prisma.calculation.findUnique({
       where: {

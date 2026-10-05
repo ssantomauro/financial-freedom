@@ -11,14 +11,6 @@ export async function GET(request: Request) {
     const limitParam = searchParams.get('limit')
     const limit = limitParam ? parseInt(limitParam, 10) : undefined
 
-    // Only allow lifetime subscribers to view history
-    if (!user.hasLifetimeAccess) {
-      return NextResponse.json(
-        { error: 'This feature is only available for lifetime subscribers' },
-        { status: 403 }
-      )
-    }
-
     // Fetch calculations with optional filter by calculator type and limit
     const calculations = await prisma.calculation.findMany({
       where: {

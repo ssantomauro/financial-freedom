@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'  // ← Make sure this line is here!
 import { PostHogProvider } from '@/lib/posthog/provider'
 import { SessionProvider } from '@/components/providers/SessionProvider'
+import { MetaPixel } from '@/components/analytics/MetaPixel'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={inter.className} suppressHydrationWarning>
         <SessionProvider>
           <PostHogProvider>
+            <MetaPixel />
             {children}
           </PostHogProvider>
         </SessionProvider>

@@ -9,6 +9,7 @@ import { OAuthButtons } from '@/components/auth/OAuthButtons'
 import { Divider } from '@/components/auth/Divider'
 import { Alert } from '@/components/auth/Alert'
 import { usePostHog, AnalyticsEvents } from '@/lib/posthog/hooks'
+import { trackMetaEvent } from '@/lib/analytics/metaPixel'
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
 function SignupForm() {
@@ -74,6 +75,7 @@ function SignupForm() {
           name,
           requires_verification: data.requiresEmailVerification || false
         })
+        trackMetaEvent('CompleteRegistration', { method: 'email' })
 
         // Identify user if we have their ID
         if (data.userId) {

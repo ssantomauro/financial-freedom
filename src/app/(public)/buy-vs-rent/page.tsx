@@ -1,15 +1,15 @@
 import Link from 'next/link'
-import { Home, TrendingUp, Calculator, DollarSign, CheckCircle, ArrowRight, Users, Star, Zap } from 'lucide-react'
+import { Home, DollarSign, CheckCircle, ArrowRight, Zap } from 'lucide-react'
 import { HomeNavigation } from '@/components/layout/HomeNavigation'
 import { PublicFooter } from '@/components/layout/PublicFooter'
 
 export const metadata = {
   title: 'Buy vs Rent Calculator - Make the Right Financial Decision',
-  description: 'Professional buy vs rent calculator that helps you make informed housing decisions. Compare total costs, ROI, and long-term wealth impact. Special launch offer: $4.90 for first 100 users!',
+  description: 'Professional buy vs rent calculator that helps you make informed housing decisions. Compare total costs, ROI, and long-term wealth impact. 100% free, no credit card required.',
   keywords: 'buy vs rent calculator, rent or buy calculator, housing calculator, real estate calculator, home buying calculator',
   openGraph: {
     title: 'Buy vs Rent Calculator - Make the Right Financial Decision',
-    description: 'Compare buying vs renting with our professional calculator. Special launch offer: $4.90 (regularly $19.90)',
+    description: 'Compare buying vs renting with a free calculator that explains every step of the math.',
     type: 'website',
   },
 }
@@ -26,14 +26,14 @@ export default async function BuyVsRentLandingPage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
               <Zap className="w-4 h-4" />
-              Limited Time Offer - First 100 Users
+              100% Free - No Credit Card Required
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               Should You <span className="text-blue-600">Buy</span> or <span className="text-purple-600">Rent</span>?
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Make the smartest financial decision of your life with our professional Buy vs Rent Calculator.
-              Compare total costs, hidden expenses, and long-term wealth impact in minutes.
+              Compare the total costs, hidden expenses, and long-term wealth impact of buying vs renting,
+              with every step of the math explained in plain English.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <Link
@@ -44,10 +44,10 @@ export default async function BuyVsRentLandingPage() {
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <a
-                href="#pricing"
+                href="#how-it-works"
                 className="text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition"
               >
-                View Pricing
+                How It Works
               </a>
             </div>
             <div className="flex items-center justify-center gap-6 text-sm text-gray-600">
@@ -57,7 +57,7 @@ export default async function BuyVsRentLandingPage() {
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-green-600" />
-                <span>3 free calculations</span>
+                <span>Unlimited free calculations</span>
               </div>
             </div>
           </div>
@@ -66,6 +66,7 @@ export default async function BuyVsRentLandingPage() {
           <div className="max-w-5xl mx-auto">
             <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-2 shadow-2xl">
               <div className="bg-white rounded-xl p-8">
+                <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 text-center">Example result</p>
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
                     <div className="flex items-center gap-3 mb-4">
@@ -105,35 +106,6 @@ export default async function BuyVsRentLandingPage() {
                     💡 Recommendation: <span className="text-green-600">Buying puts an extra $88,780 in your pocket</span>
                   </p>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof */}
-      <section className="py-12 bg-white border-y border-gray-200">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-12">
-            <div className="flex items-center gap-3">
-              <Users className="w-8 h-8 text-blue-600" />
-              <div>
-                <div className="text-3xl font-bold text-gray-900">100+</div>
-                <div className="text-gray-600">Happy Users</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Calculator className="w-8 h-8 text-blue-600" />
-              <div>
-                <div className="text-3xl font-bold text-gray-900">1,000+</div>
-                <div className="text-gray-600">Calculations Made</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Star className="w-8 h-8 text-yellow-500" />
-              <div>
-                <div className="text-3xl font-bold text-gray-900">4.8/5</div>
-                <div className="text-gray-600">User Rating</div>
               </div>
             </div>
           </div>
@@ -207,7 +179,7 @@ export default async function BuyVsRentLandingPage() {
       {/*</section>*/}
 
       {/* How It Works */}
-      <section className="py-20 px-4 bg-gradient-to-br from-blue-50 to-purple-50">
+      <section id="how-it-works" className="py-20 px-4 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
@@ -249,129 +221,34 @@ export default async function BuyVsRentLandingPage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Special Launch Pricing</h2>
-            <p className="text-xl text-gray-600">Limited time offer for the first 100 users</p>
-          </div>
-
-          <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-            {/* Free Plan */}
-            <div className="bg-white rounded-2xl p-8 border-2 border-gray-200">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Free Trial</h3>
-              <div className="mb-6">
-                <div className="text-4xl font-bold text-gray-900">$0</div>
-                <div className="text-gray-600">Try before you buy</div>
-              </div>
-              <ul className="space-y-4 mb-8">
-                {[
-                  '3 free calculations',
-                  'Full feature access',
-                  'Comprehensive analysis',
-                  'No credit card required',
-                ].map((feature, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/signup"
-                className="block w-full bg-gray-100 text-gray-900 text-center px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
-              >
-                Start Free Trial
-              </Link>
-            </div>
-
-            {/* Lifetime Plan */}
-            <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 border-2 border-blue-700 relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <div className="bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-sm font-bold">
-                  BEST VALUE - 75% OFF
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-4">Lifetime Access</h3>
-              <div className="mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl text-white/70 line-through">$19.90</div>
-                  <div className="text-5xl font-bold text-white">$4.90</div>
-                </div>
-                <div className="text-blue-100">One-time payment, forever</div>
-              </div>
-              <ul className="space-y-4 mb-8">
-                {[
-                  'Unlimited calculations',
-                  'Save & review history',
-                  'All future features',
-                  'Priority support',
-                  'No recurring fees',
-                  'Lifetime updates',
-                ].map((feature, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-white">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/signup"
-                className="block w-full bg-white text-blue-600 text-center px-6 py-3 rounded-lg font-bold hover:bg-blue-50 transition shadow-lg"
-              >
-                Get Lifetime Access - $4.90
-              </Link>
-              <p className="text-center text-blue-100 text-sm mt-4">
-                ⚡ Only 21 spots left at this price!
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">What Our Users Say</h2>
-            <p className="text-xl text-gray-600">Real feedback from real people making real decisions</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: 'Sarah J.',
-                role: 'First-time Home Buyer',
-                content: 'This calculator saved me from making a $100k mistake. The detailed breakdown showed me that renting and investing made more sense for my situation.',
-                rating: 5,
-              },
-              {
-                name: 'Michael C.',
-                role: 'Third-time Home Buyer',
-                content: 'I was going to buy my third estate and I used Financial Freedom to calculate the exact monthly cost. So far, it has been very accurate!',
-                rating: 5,
-              },
-              {
-                name: 'Sebastian T.',
-                role: 'Financial Advisor',
-                content: 'I personally tried the Buy Vs Rent Calculator, and it helped me to analyze the numbers from a different perspective. 100% suggested.',
-                rating: 5,
-              },
-            ].map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-2xl p-8 border border-gray-200">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6 italic">"{testimonial.content}"</p>
-                <div>
-                  <div className="font-bold text-gray-900">{testimonial.name}</div>
-                  <div className="text-gray-600 text-sm">{testimonial.role}</div>
-                </div>
-              </div>
-            ))}
+      {/* Free Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-blue-200 text-center">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Completely Free</h2>
+            <p className="text-xl text-gray-600 mb-8">
+              No trials, no paywalls, no credit card. Create an account and use it as much as you want.
+            </p>
+            <ul className="grid sm:grid-cols-2 gap-4 mb-10 text-left max-w-xl mx-auto">
+              {[
+                'Unlimited calculations',
+                'Every step of the math explained',
+                'Save your calculations',
+                'No credit card required',
+              ].map((feature, index) => (
+                <li key={index} className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/signup"
+              className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition shadow-lg"
+            >
+              Create Free Account
+              <ArrowRight className="w-5 h-5" />
+            </Link>
           </div>
         </div>
       </section>
@@ -390,12 +267,12 @@ export default async function BuyVsRentLandingPage() {
                 a: "Unlike simple calculators, we include ALL costs: property taxes, HOA fees, maintenance, insurance, PMI, closing costs, opportunity costs, and more. We don't just calculate the total costs, we also project your net worth under both scenarios.",
               },
               {
-                q: 'Is the $4.90 price really for lifetime access?',
-                a: 'Yes! Pay once, use forever. This special pricing is only available for the first 100 users. After that, it goes up to $19.90.',
+                q: 'Is it really free?',
+                a: 'Yes. Every calculator is free to use with unlimited calculations. No credit card required.',
               },
               {
-                q: 'Can I try it before buying?',
-                a: 'Absolutely! You get 3 free calculations with full access to all features. No credit card required.',
+                q: 'Why do I need an account?',
+                a: 'An account lets you save your calculations and come back to them later.',
               },
               {
                 q: 'How accurate are the calculations?',
@@ -403,7 +280,7 @@ export default async function BuyVsRentLandingPage() {
               },
               {
                 q: 'Can I save and compare multiple scenarios?',
-                a: 'Yes! With lifetime access, you can save unlimited calculations. We are still working on giving the chance to compare different scenarios as well!',
+                a: 'You can save your calculations and review them later. Side-by-side comparison of different scenarios is coming soon.',
               },
             ].map((faq, index) => (
               <div key={index} className="bg-white rounded-xl p-6 border border-gray-200">
@@ -422,19 +299,19 @@ export default async function BuyVsRentLandingPage() {
             Ready to Calculate Your Decision?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Join other smart home buyers and renters who made informed decisions with our calculator
+            Plug in your own numbers and see which option makes more sense for you
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/signup"
               className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition shadow-lg inline-flex items-center justify-center gap-2"
             >
-              Get Started Now - $4.90
+              Get Started Free
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
           <p className="text-blue-100 mt-6">
-            ⚡ Limited time offer • 🔒 Secure payment
+            100% free • No credit card required
           </p>
         </div>
       </section>
